@@ -1,4 +1,4 @@
-package com.verissimor.lib.jpamagicfilter
+package io.github.verissimor.lib.jpamagicfilter
 
 import org.springframework.data.jpa.domain.Specification
 import java.math.BigDecimal

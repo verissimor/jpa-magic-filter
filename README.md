@@ -45,7 +45,7 @@ MAVEN
 ```xml
 
 <dependency>
-    <groupId>com.verissimor.lib</groupId>
+    <groupId>io.github.verissimor.lib</groupId>
     <artifactId>jpa-magic-filter</artifactId>
     <version>(insert latest version)</version>
 </dependency>
@@ -54,7 +54,7 @@ MAVEN
 GRADLE
 
 ```kotlin
-implementation 'com.verissimor.lib:jpa-magic-filter:(insert latest version)'
+implementation 'io.github.verissimor.lib:jpa-magic-filter:(insert latest version)'
 ```
 
 Enable it on your application:

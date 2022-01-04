@@ -1,11 +1,11 @@
-package com.verissimor.lib.jpamagicfilter
+package io.github.verissimor.lib.jpamagicfilter
 
-import com.verissimor.lib.jpamagicfilter.Gender.FEMALE
-import com.verissimor.lib.jpamagicfilter.Gender.MALE
-import com.verissimor.lib.jpamagicfilter.Timezone.AMERICA_NEW_YORK
-import com.verissimor.lib.jpamagicfilter.Timezone.AMERICA_SAO_PAULO
-import com.verissimor.lib.jpamagicfilter.Timezone.EUROPE_LONDON
-import com.verissimor.lib.jpamagicfilter.Timezone.EUROPE_PARIS
+import io.github.verissimor.lib.jpamagicfilter.Gender.FEMALE
+import io.github.verissimor.lib.jpamagicfilter.Gender.MALE
+import io.github.verissimor.lib.jpamagicfilter.Timezone.AMERICA_NEW_YORK
+import io.github.verissimor.lib.jpamagicfilter.Timezone.AMERICA_SAO_PAULO
+import io.github.verissimor.lib.jpamagicfilter.Timezone.EUROPE_LONDON
+import io.github.verissimor.lib.jpamagicfilter.Timezone.EUROPE_PARIS
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication

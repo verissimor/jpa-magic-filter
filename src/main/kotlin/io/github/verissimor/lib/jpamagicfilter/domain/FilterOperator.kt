@@ -1,4 +1,4 @@
-package com.verissimor.lib.jpamagicfilter.domain
+package io.github.verissimor.lib.jpamagicfilter.domain
 
 enum class FilterOperator(val suffix: String) {
   GREATER_THAN("_gt"),

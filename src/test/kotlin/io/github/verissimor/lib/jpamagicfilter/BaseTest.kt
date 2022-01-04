@@ -1,4 +1,4 @@
-package com.verissimor.lib.jpamagicfilter
+package io.github.verissimor.lib.jpamagicfilter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
