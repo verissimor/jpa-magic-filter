@@ -1,6 +1,6 @@
-# Jpa Magic Filter
+# Spring Jpa Magic Filter
 
-This library handles conversion between `Request Params` and `JPA Specification`.
+This library handles conversion between spring rest `Request Params` and `JPA Specification`.
 
 ## A quick overview
 
