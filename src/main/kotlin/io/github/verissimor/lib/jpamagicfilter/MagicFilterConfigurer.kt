@@ -1,4 +1,4 @@
-package com.verissimor.lib.jpamagicfilter
+package io.github.verissimor.lib.jpamagicfilter
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.MethodParameter

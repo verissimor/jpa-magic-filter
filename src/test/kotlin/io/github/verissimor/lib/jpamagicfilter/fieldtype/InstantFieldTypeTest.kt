@@ -1,6 +1,6 @@
-package com.verissimor.lib.jpamagicfilter.fieldtype
+package io.github.verissimor.lib.jpamagicfilter.fieldtype
 
-import com.verissimor.lib.jpamagicfilter.BaseTest
+import io.github.verissimor.lib.jpamagicfilter.BaseTest
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get

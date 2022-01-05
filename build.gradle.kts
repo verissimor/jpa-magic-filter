@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.nio.file.Files
-import java.nio.file.Path
-import java.util.regex.Pattern
+import java.util.Base64
 
 plugins {
   id("org.springframework.boot") version "2.6.1"
@@ -15,11 +13,17 @@ plugins {
   id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
   `java-library`
   `maven-publish`
+  id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+  signing
 }
 
-group = "com.verissimor.lib.jpamagicfilter"
-version = "1.0.0-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+group = "io.github.verissimor.lib"
+version = System.getenv("RELEASE_VERSION") ?: "1.0.0-SNAPSHOT"
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 configurations {
   compileOnly {
@@ -72,39 +76,51 @@ tasks.getByName<Jar>("jar") {
 
 publishing {
   publications {
-    create<MavenPublication>("maven") {
-      groupId = project.group.toString()
-      artifactId = rootProject.name
-      version = project.version.toString()
-
+    create<MavenPublication>("mavenJava") {
       from(components["java"])
-    }
-  }
-}
 
-// FIXME workaround for https://github.com/jfrog/build-info/issues/198
-val fixPom = tasks.register("fixPom") {
-  doLast {
-    val file = Path.of("$buildDir/publications/maven/pom-default.xml")
-    var content = Files.readString(file)
-    val pattern = Pattern.compile(
-      "(<dependencyManagement>.+?<dependencies>)(.+?)(</dependencies>.+?</dependencyManagement>)",
-      Pattern.DOTALL
-    )
-    var matcher = pattern.matcher(content)
-
-    if (matcher.find()) {
-      val firstDependencies = matcher.group(2)
-      content = matcher.replaceFirst("")
-
-      matcher = pattern.matcher(content)
-      if (!matcher.find()) {
-        throw GradleException("Didn't find second <dependencyManagement> tag, maybe https://github.com/jfrog/build-info/issues/198 has been fixed?")
+      pom {
+        name.set("Jpa Magic Filter")
+        description.set("This library handles conversion between spring rest Request Params and JPA Specification")
+        url.set("https://github.com/verissimor/jpa-magic-filter")
+        licenses {
+          license {
+            name.set("The Apache License, Version 2.0")
+            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+          }
+        }
+        developers {
+          developer {
+            id.set("verissimo")
+            name.set("Verissimo Joao Ribeiro")
+            email.set("verissimo.jribeiro@gmail.com")
+          }
+        }
+        scm {
+          connection.set("git@github.com:verissimor/jpa-magic-filter.git")
+          developerConnection.set("git@github.com/verissimor/jpa-magic-filter.git")
+          url.set("https://github.com/verissimor/jpa-magic-filter")
+        }
       }
-      content = matcher.replaceFirst("$1$2$firstDependencies$3")
     }
-
-    Files.writeString(file, content)
   }
 }
-tasks.findByName("generatePomFileForMavenPublication")?.finalizedBy(fixPom)
+
+nexusPublishing {
+  repositories {
+    create("myNexus") {
+      nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+      snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+      username.set(System.getenv("NEXUS_USERNAME") ?: project.properties["myNexusUsername"].toString())
+      password.set(System.getenv("NEXUS_PASSWORD") ?: project.properties["myNexusPassword"].toString())
+    }
+  }
+}
+
+signing {
+  val signingKeyBase64 = System.getenv("ORG_GRADLE_PROJECT_signingKey") ?: project.properties["signatory.signingKey"].toString()
+  val signingPassword = System.getenv("ORG_GRADLE_PROJECT_signingPassword") ?: project.properties["signatory.signingPassword"].toString()
+  val signingKey = String(Base64.getDecoder().decode(signingKeyBase64)).trim()
+  useInMemoryPgpKeys(signingKey, signingPassword)
+  sign(publishing.publications["mavenJava"])
+}

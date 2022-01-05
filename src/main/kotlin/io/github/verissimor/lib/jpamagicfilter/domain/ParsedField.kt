@@ -1,10 +1,10 @@
-package com.verissimor.lib.jpamagicfilter.domain
+package io.github.verissimor.lib.jpamagicfilter.domain
 
-import com.verissimor.lib.jpamagicfilter.domain.FieldType.BOOLEAN
-import com.verissimor.lib.jpamagicfilter.domain.FieldType.ENUMERATED
-import com.verissimor.lib.jpamagicfilter.domain.FieldType.INSTANT
-import com.verissimor.lib.jpamagicfilter.domain.FieldType.LOCAL_DATE
-import com.verissimor.lib.jpamagicfilter.domain.FieldType.NUMBER
+import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.BOOLEAN
+import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.ENUMERATED
+import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.INSTANT
+import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.LOCAL_DATE
+import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.NUMBER
 import java.lang.reflect.Field
 import java.math.BigDecimal
 import java.time.Instant
