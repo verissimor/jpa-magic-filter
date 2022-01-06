@@ -40,7 +40,7 @@ data class ParsedField<T>(
     fieldClass.type == Int::class.java ||
       fieldClass.type == Long::class.java ||
       fieldClass.type == BigDecimal::class.java ||
-      fieldClass.type.isNestmateOf(Number::class.java) -> NUMBER
+      fieldClass.type.isAssignableFrom(Number::class.java) -> NUMBER
 
     else -> FieldType.GENERIC
   }
