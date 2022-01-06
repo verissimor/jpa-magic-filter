@@ -24,11 +24,11 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-#      - name: Publish to Sonatype OSSRH
-#        run: ./gradlew publish closeAndReleaseStagingRepository
-#        env:
-#          RELEASE_VERSION: ${{ github.event.release.tag_name }}
-#          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-#          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-#          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
-#          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+      - name: Publish to Sonatype OSSRH
+        run: ./gradlew publish closeAndReleaseStagingRepository
+        env:
+          RELEASE_VERSION: ${{ github.event.release.tag_name }}
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
