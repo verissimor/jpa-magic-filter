@@ -230,6 +230,8 @@ List<User> getUsers(MagicFilter filter, @AuthenticationPrincipal User currentUse
 
 I'd like to suggest you have a look at the tests. You might have some fun exploring it.
 
+Also, you will find an java+maven project example in the folder: `examples/java-maven-h2`.
+
 ## Contributing to the Project
 If you'd like to contribute code to this project you can do so through GitHub by forking the repository and generating a pull request.
 
