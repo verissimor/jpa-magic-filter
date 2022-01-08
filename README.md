@@ -6,24 +6,26 @@ This library handles conversion between spring rest `Request Params` and `JPA Sp
 
 Let's suppose that you have the following entity:
 
-```kotlin  
-@Entity  
-data class User(
-  @Id val id: Long?, 
-  val name: String, 
-  val age: Int, 
-  @ManyToOne val city: City
-)  
+```java  
+@Entity
+public class User {
+  @Id
+  @GeneratedValue(strategy = IDENTITY)
+  Long id;
+  String name;
+  Integer age;
+  @ManyToOne City city;
+}
 ```  
 
 Using this library, the lines of code:
 
-```kotlin
+```java
 // just an overview, check out `Getting Started` 
 @GetMapping
-fun getCurrentUser(filter: MagicFilter): List<User> {
-  val specification: Specification<User> = filter.getSpec(User::class.java)
-  return userRepository.findAll(specification)
+List<User> getCurrentUser(MagicFilter filter)  {
+  Specification<User> specification = filter.toSpecification(User.class);
+  return userRepository.findAll(specification);
 }
 ```
 
@@ -47,45 +49,47 @@ MAVEN
 <dependency>
     <groupId>io.github.verissimor.lib</groupId>
     <artifactId>jpa-magic-filter</artifactId>
-    <version>(insert latest version)</version>
+    <version>0.0.10</version>
 </dependency>
 ```
 
 GRADLE
 
 ```kotlin
-implementation 'io.github.verissimor.lib:jpa-magic-filter:(insert latest version)'
+implementation 'io.github.verissimor.lib:jpa-magic-filter:0.0.10'
 ```
 
 Enable it on your application:
 
-```kotlin
+```java
 @EnableJpaMagicFilter
 @SpringBootApplication
-class DemoApplication
+public class DemoApplication
 ```
 
 Set up an `entity` and a repository that receives a `Specification`:
 
-```kotlin
-@Repository
-interface UserRepository : JpaRepository<User, Long> {
-  fun findAll(spec: Specification<User>?): List<User>
+```java
+public interface UserRepository extends JpaRepository<User, Long> {
+  List<User> findAll(Specification<User> spec);
 }
 ```
 
 Receive a `MagicFilter` as parameter of a `@GetMapping` and use `filter.getSpec(XXX::class.java)` to resolve a `Specification`:
 
-```kotlin
-// @RestController
-// @RequestMapping("/api/users")
-// class UserController(private val userRepository: UserRepository) {
-@GetMapping
-fun getCurrentUser(filter: MagicFilter): List<User> {
-  val specification: Specification<User> = filter.getSpec(User::class.java)
-  return userRepository.findAll(specification)
-}
-// }
+```java
+//@RestController
+//@RequestMapping("/api/users")
+//@RequiredArgsConstructor
+//public class UserController {
+//  private final UserRepository userRepository;
+
+  @GetMapping
+  List<User> getCurrentUser(MagicFilter filter)  {
+    Specification<User> specification = filter.toSpecification(User.class);
+    return userRepository.findAll(specification);
+  }
+//}
 ```
 
 ## How to use
@@ -181,6 +185,5 @@ By contributing your code, you agree to license your contribution under the term
 
 ## TODO
 
-- integrate with `Maven Central`
 - add test and documentation about pagination
 - add test and documentation about how to integrate with `kotlin-jpa-specification-dsl`
