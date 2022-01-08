@@ -1,4 +1,8 @@
 # Spring Jpa Magic Filter
+[![CI Pipeline](https://github.com/verissimor/jpa-magic-filter/actions/workflows/ci-pipeline.yml/badge.svg)](https://github.com/verissimor/jpa-magic-filter/actions/workflows/ci-pipeline.yml) 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.verissimor.lib/jpa-magic-filter/badge.svg)](https://search.maven.org/artifact/io.github.verissimor.lib/jpa-magic-filter/0.0.10/jar)
+[![Coverage](.github/badges/jacoco.svg)](jacoco.svg)
+[![License](https://img.shields.io/github/license/verissimor/jpa-magic-filter)](https://github.com/verissimor/jpa-magic-filter/blob/master/LICENSE)
 
 This library handles conversion between spring rest `Request Params` and `JPA Specification`. It can be considered a simpler alternative for `Querydsl Web Support`.
 
