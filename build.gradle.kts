@@ -15,6 +15,7 @@ plugins {
   `maven-publish`
   id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
   signing
+  jacoco
 }
 
 group = "io.github.verissimor.lib"
@@ -129,4 +130,10 @@ signing {
 
 tasks.withType<Sign> {
   enabled = project.version.toString().endsWith("SNAPSHOT").not()
+}
+
+tasks.jacocoTestReport {
+  reports {
+    csv.required.set(true)
+  }
 }
