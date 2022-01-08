@@ -18,11 +18,13 @@ plugins {
 }
 
 group = "io.github.verissimor.lib"
-version = System.getenv("RELEASE_VERSION") ?: "1.0.0-SNAPSHOT"
+version = System.getenv("RELEASE_VERSION") ?: "0.0.9-SNAPSHOT"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
+  withSourcesJar()
+  withJavadocJar()
 }
 
 configurations {
@@ -32,7 +34,6 @@ configurations {
 }
 
 repositories {
-  maven { url = uri("https://repo.spring.io/milestone") }
   mavenCentral()
 }
 
@@ -72,6 +73,7 @@ tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar
 
 tasks.getByName<Jar>("jar") {
   enabled = true
+  archiveClassifier.set("")
 }
 
 publishing {
@@ -123,4 +125,8 @@ signing {
   val signingKey = String(Base64.getDecoder().decode(signingKeyBase64)).trim()
   useInMemoryPgpKeys(signingKey, signingPassword)
   sign(publishing.publications["mavenJava"])
+}
+
+tasks.withType<Sign> {
+  enabled = project.version.toString().endsWith("SNAPSHOT").not()
 }
