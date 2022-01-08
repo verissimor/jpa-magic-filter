@@ -50,5 +50,13 @@ class JavaMavenH2ApplicationTests {
         .andExpect(jsonPath("$", hasSize(2)));
   }
 
+  @Test
+  public void shouldFilterPaged() throws Exception {
+    mockMvc.perform(get("/api/users/paged?city.name=London&?size=20&sort=id,desc&page=0"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content", hasSize(2)));
+  }
+
   // you can find more examples on the main tests of the project
 }

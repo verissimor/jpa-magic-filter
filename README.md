@@ -1,6 +1,6 @@
 # Spring Jpa Magic Filter
 
-This library handles conversion between spring rest `Request Params` and `JPA Specification`.
+This library handles conversion between spring rest `Request Params` and `JPA Specification`. It can be considered a simpler alternative for `Querydsl Web Support`.
 
 ## A quick overview
 
@@ -174,6 +174,58 @@ If the value can't be resolved as any of the above, the lib will resolve it as `
 
 Please submit a pull request. However, if you don't know how to do it, open an issue.
 
+# Integrate with pagination
+
+Add a paginated method to your repository:
+```java
+//public interface UserRepository extends JpaRepository<User, Long> {
+//  List<User> findAll(Specification<User> spec);
+  Page<User> findAll(Specification<User> spec, Pageable page);
+//}
+```
+
+Change your controller to receive a pageable:
+```java
+@GetMapping("/paged")
+Page<User> getUsersPaged(MagicFilter filter, Pageable pageable)  {
+  Specification<User> specification = filter.toSpecification(User.class);
+  return userRepository.findAll(specification, pageable);
+}
+```
+
+Execute a GET call using:
+```java
+/api/users/paged?city.name=London&?size=20&sort=id,desc&page=0
+// more info: https://docs.spring.io/spring-data/rest/docs/current/reference/html/#paging-and-sorting.sorting
+```
+
+# Integrate with other business rules
+
+Let's say there is in place a rule that says: `Users can only see users that are in the same city`.
+
+Implement a predicate:
+```java
+// java
+public static Specification<User> isSameCity(User currentUser) {
+  return (root, query, cb) -> cb.equal(root.get("city").get("id"), currentUser.getCity().getId());
+}
+
+// --  or kotlin --
+fun isSameCity(currentUser: User): Specification<User> = Specification { root, query, cb -> 
+  cb.equal(root.get<City>("city").get<Long>("id"), currentUser.city.id) 
+}
+```
+
+Change your controller (or service) to use `and` specification: 
+
+```java
+@GetMapping
+List<User> getUsers(MagicFilter filter, @AuthenticationPrincipal User currentUser) {
+    Specification<User> specification = filter.toSpecification(User.class);
+    return userRepository.findAll(specification.and(isSameCity(currentUser)));
+}
+```
+
 ## Need more information about how to use?
 
 I'd like to suggest you have a look at the tests. You might have some fun exploring it.
@@ -182,8 +234,3 @@ I'd like to suggest you have a look at the tests. You might have some fun explor
 If you'd like to contribute code to this project you can do so through GitHub by forking the repository and generating a pull request.
 
 By contributing your code, you agree to license your contribution under the terms of the Apache Licence.
-
-## TODO
-
-- add test and documentation about pagination
-- add test and documentation about how to integrate with `kotlin-jpa-specification-dsl`
