@@ -9,7 +9,7 @@ class MagicFilter(
   private val parameterMap: Map<String, Array<String>>
 ) {
 
-  fun <T> getSpec(clazz: Class<*>): Specification<T> = Specification { root, _, cb ->
+  fun <T> toSpecification(clazz: Class<*>): Specification<T> = Specification { root, _, cb ->
     val parsed = PredicateParser.parsePredicates(parameterMap, clazz, root, cb)
 
     when (parameterMap.toSingleParameter(SEARCH_TYPE_PRM)) {

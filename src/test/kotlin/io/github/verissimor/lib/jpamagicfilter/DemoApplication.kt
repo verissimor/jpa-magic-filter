@@ -47,7 +47,7 @@ class UserController(
 
   @GetMapping
   fun getCurrentUser(filter: MagicFilter): List<User> {
-    val specification: Specification<User> = filter.getSpec(User::class.java)
+    val specification: Specification<User> = filter.toSpecification(User::class.java)
     return userRepository.findAll(specification)
   }
 }
