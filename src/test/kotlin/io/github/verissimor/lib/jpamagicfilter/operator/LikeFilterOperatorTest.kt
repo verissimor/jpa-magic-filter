@@ -26,6 +26,15 @@ class LikeFilterOperatorTest : BaseTest() {
   }
 
   @Test
+  fun `should filter like with ignore case`() {
+    mockMvc.get("/api/users?name_like=gloria")
+      .andExpect {
+        status { isOk() }
+        jsonPath("$", hasSize<Int>(2))
+      }
+  }
+
+  @Test
   fun `should filter like end`() {
     mockMvc.get("/api/users?name_like_exp=%t")
       .andExpect {

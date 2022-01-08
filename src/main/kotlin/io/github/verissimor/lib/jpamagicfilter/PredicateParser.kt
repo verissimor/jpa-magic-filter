@@ -55,10 +55,10 @@ object PredicateParser {
       LESS_THAN -> parseLessThan(parsedField, value, cb)
       LESS_THAN_EQUAL -> parseLessThanEqual(parsedField, value, cb)
 
-      LIKE -> cb.like(parsedField.getPath(), "%${value.toSingleString()}%")
-      LIKE_EXP -> cb.like(parsedField.getPath(), value.toSingleString())
-      NOT_LIKE -> cb.notLike(parsedField.getPath(), "%${value.toSingleString()}%")
-      NOT_LIKE_EXP -> cb.notLike(parsedField.getPath(), value.toSingleString())
+      LIKE -> cb.like(cb.lower(parsedField.getPath()), "%${value.toSingleString()?.lowercase()}%")
+      LIKE_EXP -> cb.like(cb.lower(parsedField.getPath()), value.toSingleString()?.lowercase())
+      NOT_LIKE -> cb.notLike(cb.lower(parsedField.getPath()), "%${value.toSingleString()?.lowercase()}%")
+      NOT_LIKE_EXP -> cb.notLike(cb.lower(parsedField.getPath()), value.toSingleString()?.lowercase())
 
       IN -> parseIn(parsedField, value, params)
       NOT_IN -> parseNotIn(parsedField, value, params)
