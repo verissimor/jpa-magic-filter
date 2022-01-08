@@ -18,8 +18,13 @@ jobs:
       with:
         java-version: '8'
         distribution: 'adopt'
+        cache: maven
         
     - name: Build with Gradle
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
         arguments: build
+    
+    - name: Build Java Example Project with Maven
+      working-directory: ./examples/java-maven-h2
+      run: mvn -B package --file pom.xml
