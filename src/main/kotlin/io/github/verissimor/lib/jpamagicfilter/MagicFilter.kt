@@ -1,5 +1,7 @@
 package io.github.verissimor.lib.jpamagicfilter
 
+import io.github.verissimor.lib.jpamagicfilter.domain.DbFeatures
+import io.github.verissimor.lib.jpamagicfilter.domain.DbFeatures.NONE
 import org.springframework.data.jpa.domain.Specification
 import java.math.BigDecimal
 import java.time.Instant
@@ -9,8 +11,8 @@ class MagicFilter(
   private val parameterMap: Map<String, Array<String>>
 ) {
 
-  fun <T> toSpecification(clazz: Class<*>): Specification<T> = Specification { root, _, cb ->
-    val parsed = PredicateParser.parsePredicates(parameterMap, clazz, root, cb)
+  fun <T> toSpecification(clazz: Class<*>, dbFeatures: DbFeatures = NONE): Specification<T> = Specification { root, _, cb ->
+    val parsed = PredicateParser.parsePredicates(parameterMap, clazz, root, cb, dbFeatures)
 
     when (parameterMap.toSingleParameter(SEARCH_TYPE_PRM)) {
       SEARCH_TYPE_AND, null -> cb.and(*parsed.toTypedArray())

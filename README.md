@@ -230,6 +230,20 @@ List<User> getUsers(MagicFilter filter, @AuthenticationPrincipal User currentUse
 }
 ```
 
+## Advanced Postgres Function
+
+Execute the following piece of code on your db, [more info](https://stackoverflow.com/a/11007216/5795553): 
+
+```sql
+CREATE EXTENSION unaccent;
+```
+
+Then enable postgres extensions through:
+
+```kotlin
+filter.toSpecification(User::class.java, DbFeatures.POSTGRES)
+```
+
 ## Need more information about how to use?
 
 I'd like to suggest you have a look at the tests. You might have some fun exploring it.
