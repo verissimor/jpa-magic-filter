@@ -2,6 +2,9 @@ package io.github.verissimor.lib.jpamagicfilter
 
 import io.github.verissimor.lib.jpamagicfilter.MagicFilter.Companion.SEARCH_IN_SEPARATOR_DEF
 import io.github.verissimor.lib.jpamagicfilter.MagicFilter.Companion.SEARCH_IN_SEPARATOR_PRM
+import io.github.verissimor.lib.jpamagicfilter.domain.DbFeatures
+import io.github.verissimor.lib.jpamagicfilter.domain.DbFeatures.NONE
+import io.github.verissimor.lib.jpamagicfilter.domain.DbFeatures.POSTGRES
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.BOOLEAN
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.ENUMERATED
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.GENERIC
@@ -38,7 +41,8 @@ object PredicateParser {
     params: Map<String, Array<String>?>,
     clazz: Class<*>,
     root: Root<T>,
-    cb: CriteriaBuilder
+    cb: CriteriaBuilder,
+    dbFeatures: DbFeatures,
   ): List<Predicate> = params.mapNotNull { (field, value) ->
     val parsedField = FieldParser.parseField(field, value, clazz, root)
 
@@ -55,10 +59,10 @@ object PredicateParser {
       LESS_THAN -> parseLessThan(parsedField, value, cb)
       LESS_THAN_EQUAL -> parseLessThanEqual(parsedField, value, cb)
 
-      LIKE -> cb.like(cb.lower(parsedField.getPath()), "%${value.toSingleString()?.lowercase()}%")
-      LIKE_EXP -> cb.like(cb.lower(parsedField.getPath()), value.toSingleString()?.lowercase())
-      NOT_LIKE -> cb.notLike(cb.lower(parsedField.getPath()), "%${value.toSingleString()?.lowercase()}%")
-      NOT_LIKE_EXP -> cb.notLike(cb.lower(parsedField.getPath()), value.toSingleString()?.lowercase())
+      LIKE -> parseLike(parsedField, value, cb, dbFeatures)
+      LIKE_EXP -> parseLikeExp(parsedField, value, cb, dbFeatures)
+      NOT_LIKE -> parseNotLike(parsedField, value, cb, dbFeatures)
+      NOT_LIKE_EXP -> parseNotLikeExp(parsedField, value, cb, dbFeatures)
 
       IN -> parseIn(parsedField, value, params)
       NOT_IN -> parseNotIn(parsedField, value, params)
@@ -66,6 +70,26 @@ object PredicateParser {
       IS_NULL -> cb.isNull(parsedField.getPath<Any>())
       IS_NOT_NULL -> cb.isNotNull(parsedField.getPath<Any>())
     }
+  }
+
+  private fun <T> parseLike(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder, dbFeatures: DbFeatures) = when (dbFeatures) {
+    POSTGRES -> cb.like(cb.function("unaccent", String::class.java, cb.lower(parsedField.getPath())), "%${value.toSingleString()?.lowercase()?.unaccent()}%")
+    NONE -> cb.like(cb.lower(parsedField.getPath()), "%${value.toSingleString()?.lowercase()}%")
+  }
+
+  private fun <T> parseLikeExp(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder, dbFeatures: DbFeatures) = when (dbFeatures) {
+    POSTGRES -> cb.like(cb.function("unaccent", String::class.java, cb.lower(parsedField.getPath())), value.toSingleString()?.lowercase()?.unaccent())
+    NONE -> cb.like(cb.lower(parsedField.getPath()), value.toSingleString()?.lowercase())
+  }
+
+  private fun <T> parseNotLike(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder, dbFeatures: DbFeatures) = when (dbFeatures) {
+    POSTGRES -> cb.notLike(cb.function("unaccent", String::class.java, cb.lower(parsedField.getPath())), "%${value.toSingleString()?.lowercase()?.unaccent()}%")
+    NONE -> cb.notLike(cb.lower(parsedField.getPath()), "%${value.toSingleString()?.lowercase()}%")
+  }
+
+  private fun <T> parseNotLikeExp(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder, dbFeatures: DbFeatures) = when (dbFeatures) {
+    POSTGRES -> cb.notLike(cb.function("unaccent", String::class.java, cb.lower(parsedField.getPath())), value.toSingleString()?.lowercase()?.unaccent())
+    NONE -> cb.notLike(cb.lower(parsedField.getPath()), value.toSingleString()?.lowercase())
   }
 
   private fun <T> parseEqual(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder) = when (parsedField.getFieldType()) {

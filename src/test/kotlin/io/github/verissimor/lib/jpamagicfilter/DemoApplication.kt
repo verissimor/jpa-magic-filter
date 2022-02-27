@@ -6,6 +6,7 @@ import io.github.verissimor.lib.jpamagicfilter.Timezone.AMERICA_NEW_YORK
 import io.github.verissimor.lib.jpamagicfilter.Timezone.AMERICA_SAO_PAULO
 import io.github.verissimor.lib.jpamagicfilter.Timezone.EUROPE_LONDON
 import io.github.verissimor.lib.jpamagicfilter.Timezone.EUROPE_PARIS
+import io.github.verissimor.lib.jpamagicfilter.domain.DbFeatures.POSTGRES
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -48,6 +49,12 @@ class UserController(
   @GetMapping
   fun getCurrentUser(filter: MagicFilter): List<User> {
     val specification: Specification<User> = filter.toSpecification(User::class.java)
+    return userRepository.findAll(specification)
+  }
+
+  @GetMapping("postgre-like-dbs")
+  fun getCurrentUserPostgre(filter: MagicFilter): List<User> {
+    val specification: Specification<User> = filter.toSpecification(User::class.java, POSTGRES)
     return userRepository.findAll(specification)
   }
 }
