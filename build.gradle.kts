@@ -2,15 +2,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Base64
 
 plugins {
-  id("org.springframework.boot") version "2.6.1"
-  id("io.spring.dependency-management") version "1.0.11.RELEASE"
-  kotlin("jvm") version "1.6.0"
-  kotlin("plugin.spring") version "1.6.0"
-  kotlin("plugin.jpa") version "1.6.10"
+  id("org.springframework.boot") version "2.7.3"
+  id("io.spring.dependency-management") version "1.0.13.RELEASE"
+  kotlin("jvm") version "1.6.21"
+  kotlin("plugin.spring") version "1.6.21"
+  kotlin("plugin.jpa") version "1.6.21"
 
-  kotlin("kapt") version "1.6.0"
+  kotlin("kapt") version "1.6.21"
 
-  id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
+  id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
   `java-library`
   `maven-publish`
   id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
@@ -19,7 +19,7 @@ plugins {
 }
 
 group = "io.github.verissimor.lib"
-version = System.getenv("RELEASE_VERSION") ?: "0.0.11-SNAPSHOT"
+version = System.getenv("RELEASE_VERSION") ?: "1.0.0-SNAPSHOT"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
