@@ -9,7 +9,6 @@ import java.lang.reflect.Field
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
-import javax.persistence.Enumerated
 import javax.persistence.criteria.Path
 import javax.persistence.criteria.Root
 
@@ -30,18 +29,29 @@ data class ParsedField<T>(
     return fullPath ?: error("unexpected condition to parse path of $resolvedFieldName")
   }
 
-  fun getFieldType(): FieldType? = when {
-    fieldClass == null -> null
-    fieldClass.getDeclaredAnnotationsByType(Enumerated::class.java).isNotEmpty() -> ENUMERATED
-    fieldClass.type == LocalDate::class.java -> LOCAL_DATE
-    fieldClass.type == Instant::class.java -> INSTANT
-    fieldClass.type == Boolean::class.java -> BOOLEAN
+  fun getFieldType(): FieldType? = getFieldType(fieldClass)
 
-    fieldClass.type == Int::class.java ||
-      fieldClass.type == Long::class.java ||
-      fieldClass.type == BigDecimal::class.java ||
-      fieldClass.type.isAssignableFrom(Number::class.java) -> NUMBER
+  companion object {
+    fun getFieldType(fieldClass: Field?): FieldType? = when {
+      fieldClass == null -> null
+      fieldClass.type?.superclass?.name == "java.lang.Enum" -> ENUMERATED
+      fieldClass.type == LocalDate::class.java -> LOCAL_DATE
+      fieldClass.type == Instant::class.java -> INSTANT
+      fieldClass.type == Boolean::class.java ||
+        // this solves conflicts between kotlin/java
+        fieldClass.type.name == "java.lang.Boolean" -> BOOLEAN
 
-    else -> FieldType.GENERIC
+      fieldClass.type == Int::class.java ||
+        fieldClass.type == Long::class.java ||
+        fieldClass.type == BigDecimal::class.java ||
+        fieldClass.type.isAssignableFrom(Number::class.java) ||
+        // this solves conflicts between kotlin/java
+        fieldClass.type.name == "java.lang.Integer" ||
+        fieldClass.type.name == "java.math.BigDecimal" ||
+        fieldClass.type.name == "java.lang.Long" ||
+        fieldClass.type.isAssignableFrom(java.lang.Number::class.java) -> NUMBER
+
+      else -> FieldType.GENERIC
+    }
   }
 }
