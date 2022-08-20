@@ -96,6 +96,37 @@ Receive a `MagicFilter` as parameter of a `@GetMapping` and use `filter.getSpec(
 //}
 ```
 
+## Enable support for Spring WebFlux and R2DBC
+
+This lib is compatible with R2DBC. Check out an example in the `examples\java-gradle-reactive`.
+
+```java
+@EnableR2dbcMagicFilter
+//@SpringBootApplication
+//public class DemoApplication
+```
+
+You can either use the fluent api:
+```java
+// https://docs.spring.io/spring-data/r2dbc/docs/current/reference/html/#r2dbc.entityoperations.fluent-api
+@GetMapping
+Flux<User> getUsers(R2dbcMagicFilter filter, Pageable pageable) {
+    Criteria criteria = filter.toCriteria(User.class, DbFeatures.NONE);
+    return r2dbcTemplate.select(User.class).matching(query(criteria)).all();
+}
+```
+
+Or, extend ReactiveCrudRepository and implement ReactiveSearchRepository
+
+```java
+// see how on my discussion on stack overflow (https://stackoverflow.com/questions/73424096/reactivecrudrepository-criteria-query)
+@GetMapping("/paged")
+Mono<Page<User>> getUsersPaged(R2dbcMagicFilter filter, Pageable pageable) {
+    Criteria criteria = filter.toCriteria(User.class, DbFeatures.NONE);
+    return userRepository.findAll(criteria, pageable, User.class);
+}
+```
+
 ## How to use
 
 A `filter predicate` is composed of a `field`, an `operator`, and a `value`.
@@ -119,7 +150,7 @@ where u.name like '%Matthew%' and u.age > 23 and c.name = 'London'
 ## Supported Operators
 
 | Operator           | Suffix        | Example                     |
-| ------------------ | ------------- | --------------------------- |
+|--------------------|---------------|-----------------------------|
 | EQUAL              |               | `?name=Matthew`             |
 | GREATER_THAN       | _gt           | `?age_gt=32`                |
 | GREATER_THAN_EQUAL | _ge           | `?age_ge=32`                |
@@ -248,9 +279,15 @@ filter.toSpecification(User::class.java, DbFeatures.POSTGRES)
 
 I'd like to suggest you have a look at the tests. You might have some fun exploring it.
 
-Also, you will find an java+maven project example in the folder: `examples/java-maven-h2`.
+Also, you will find a java+maven project example in the folder: `examples/java-maven-h2`.
 
 ## Contributing to the Project
 If you'd like to contribute code to this project you can do so through GitHub by forking the repository and generating a pull request.
 
 By contributing your code, you agree to license your contribution under the terms of the Apache Licence.
+
+## TODO
+1. add reactive example
+2. rename the examples
+3. remove the SEARCH_IN_SEPARATOR_PRM & SEARCH_IN_SEPARATOR_DEF
+4. remove POSTGRES unaccent for reactive

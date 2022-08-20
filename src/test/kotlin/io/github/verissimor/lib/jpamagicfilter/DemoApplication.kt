@@ -29,6 +29,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.ManyToOne
+import javax.persistence.Table
 import java.time.Instant.parse as instant
 import java.time.LocalDate.parse as date
 
@@ -52,14 +53,15 @@ class UserController(
     return userRepository.findAll(specification)
   }
 
-  @GetMapping("postgre-like-dbs")
-  fun getCurrentUserPostgre(filter: MagicFilter): List<User> {
+  @GetMapping("postgres-like-dbs")
+  fun getCurrentUserPostgres(filter: MagicFilter): List<User> {
     val specification: Specification<User> = filter.toSpecification(User::class.java, POSTGRES)
     return userRepository.findAll(specification)
   }
 }
 
 @Entity
+@Table(name = "app_user")
 data class User(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
