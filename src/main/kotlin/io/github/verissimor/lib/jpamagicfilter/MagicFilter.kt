@@ -11,7 +11,7 @@ class MagicFilter(
   private val parameterMap: Map<String, Array<String>>
 ) {
 
-  fun <T> toSpecification(clazz: Class<*>, dbFeatures: DbFeatures = NONE): Specification<T> = Specification { root, _, cb ->
+  fun <T> toSpecification(clazz: Class<*>, dbFeatures: DbFeatures): Specification<T> = Specification { root, _, cb ->
     val parsed = PredicateParser.parsePredicates(parameterMap, clazz, root, cb, dbFeatures)
 
     when (parameterMap.toSingleParameter(SEARCH_TYPE_PRM)) {
@@ -20,6 +20,8 @@ class MagicFilter(
       else -> error("Invalid searchType. Only allowed: and, or")
     }
   }
+
+  fun <T> toSpecification(clazz: Class<*>): Specification<T> = toSpecification(clazz, NONE)
 
   companion object {
     const val SEARCH_TYPE_PRM = "searchType"
