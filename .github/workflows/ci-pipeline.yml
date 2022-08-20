@@ -8,11 +8,10 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up JDK 8
       uses: actions/setup-java@v2
       with:
@@ -49,6 +48,19 @@ jobs:
       working-directory: ./examples/java-maven-h2
       run: mvn -B package --file pom.xml
 
-    - name: Build Java Example Spring Reactive
-      working-directory: ./examples/java-gradle-reactive
-      run: ./gradlew build
+  buildJava17:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Build Java Example Spring Reactive
+        working-directory: ./examples/java-gradle-reactive
+        run: ./gradlew build
