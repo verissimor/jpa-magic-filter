@@ -1,6 +1,6 @@
 # Spring Jpa Magic Filter
 [![CI Pipeline](https://github.com/verissimor/jpa-magic-filter/actions/workflows/ci-pipeline.yml/badge.svg)](https://github.com/verissimor/jpa-magic-filter/actions/workflows/ci-pipeline.yml) 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.verissimor.lib/jpa-magic-filter/badge.svg)](https://search.maven.org/artifact/io.github.verissimor.lib/jpa-magic-filter/0.0.10/jar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.verissimor.lib/jpa-magic-filter/badge.svg)](https://search.maven.org/artifact/io.github.verissimor.lib/jpa-magic-filter)
 [![Coverage](.github/badges/jacoco.svg)](jacoco.svg)
 [![License](https://img.shields.io/github/license/verissimor/jpa-magic-filter)](https://github.com/verissimor/jpa-magic-filter/blob/master/LICENSE)
 
@@ -53,14 +53,14 @@ MAVEN
 <dependency>
     <groupId>io.github.verissimor.lib</groupId>
     <artifactId>jpa-magic-filter</artifactId>
-    <version>0.0.10</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 GRADLE
 
 ```kotlin
-implementation 'io.github.verissimor.lib:jpa-magic-filter:0.0.10'
+implementation 'io.github.verissimor.lib:jpa-magic-filter:1.0.1'
 ```
 
 Enable it on your application:

@@ -48,3 +48,7 @@ jobs:
     - name: Build Java Example Project with Maven
       working-directory: ./examples/java-maven-h2
       run: mvn -B package --file pom.xml
+
+    - name: Build Java Example Spring Reactive
+      working-directory: ./examples/java-gradle-reactive
+      run: ./gradlew build

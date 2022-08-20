@@ -32,8 +32,10 @@ class R2dbcMagicFilter(
       else -> error("Invalid searchType. Only allowed: and, or")
     }
 
-    log.info(criteria.toString())
+    log.debug(criteria.toString())
 
     return criteria
   }
+
+  fun toCriteria(clazz: Class<*>): Criteria = toCriteria(clazz, NONE)
 }

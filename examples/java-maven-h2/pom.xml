@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>io.github.verissimor.lib</groupId>
 			<artifactId>jpa-magic-filter</artifactId>
-			<version>0.0.10</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
