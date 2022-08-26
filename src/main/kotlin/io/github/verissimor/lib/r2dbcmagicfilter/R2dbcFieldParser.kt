@@ -1,6 +1,9 @@
 package io.github.verissimor.lib.r2dbcmagicfilter
 
+import io.github.verissimor.lib.jpamagicfilter.domain.FieldType
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator
+import io.github.verissimor.lib.jpamagicfilter.domain.ParsedField
+import io.github.verissimor.lib.jpamagicfilter.toSingleString
 import io.github.verissimor.lib.r2dbcmagicfilter.domain.R2dbcParsedField
 import java.lang.reflect.Field
 
@@ -8,25 +11,37 @@ object R2dbcFieldParser {
 
   fun parseField(field: String, value: Array<String>?, clazz: Class<*>): R2dbcParsedField {
     val normalized = normalize(field)
-    val filterType = fieldToType(normalized, value)
-    val resolvedFieldName = resolveFieldName(normalized, filterType)
+    val filterOperator = fieldToFilterOperator(normalized)
+    val resolvedFieldName = resolveFieldName(normalized, filterOperator)
     val fieldClass: Field? = fieldToClass(resolvedFieldName, clazz)
 
-    return R2dbcParsedField(filterType, resolvedFieldName, fieldClass)
+    val resolvedOperator = overloadFilterOperator(filterOperator, value, fieldClass)
+
+    return R2dbcParsedField(resolvedOperator, resolvedFieldName, fieldClass)
   }
 
   private fun normalize(field: String) = field.trim().replace("[]", "")
 
-  private fun fieldToType(field: String, value: Array<String>?): FilterOperator {
+  private fun fieldToFilterOperator(field: String): FilterOperator {
     val type = FilterOperator.values()
       .sortedByDescending { it.suffix.length }
       .firstOrNull { field.contains(it.suffix) } ?: FilterOperator.EQUAL
 
-    if (value != null && type == FilterOperator.EQUAL && value.size > 1) {
+    return type
+  }
+
+  private fun overloadFilterOperator(filterOperator: FilterOperator, value: Array<String>?, fieldClass: Field?): FilterOperator {
+    val shouldTryOverload = value != null && filterOperator == FilterOperator.EQUAL
+    if (shouldTryOverload && value!!.size > 1) {
       return FilterOperator.IN
     }
 
-    return type
+    val fieldType: FieldType? = ParsedField.getFieldType(fieldClass)
+    if (shouldTryOverload && fieldType == FieldType.NUMBER && value!!.toSingleString()!!.contains(",")) {
+      return FilterOperator.IN
+    }
+
+    return filterOperator
   }
 
   private fun resolveFieldName(field: String, type: FilterOperator?) =
