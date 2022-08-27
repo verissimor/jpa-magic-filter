@@ -53,14 +53,14 @@ MAVEN
 <dependency>
     <groupId>io.github.verissimor.lib</groupId>
     <artifactId>jpa-magic-filter</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
 GRADLE
 
 ```kotlin
-implementation 'io.github.verissimor.lib:jpa-magic-filter:1.0.1'
+implementation 'io.github.verissimor.lib:jpa-magic-filter:1.0.2'
 ```
 
 Enable it on your application:

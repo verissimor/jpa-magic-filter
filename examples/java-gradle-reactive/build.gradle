@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'io.github.verissimor.lib:jpa-magic-filter:1.0.0'
+	implementation 'io.github.verissimor.lib:jpa-magic-filter:1.0.2'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
