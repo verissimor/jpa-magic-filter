@@ -6,5 +6,6 @@ enum class FieldType {
   LOCAL_DATE,
   INSTANT,
   BOOLEAN,
+  UUID,
   GENERIC
 }

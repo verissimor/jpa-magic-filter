@@ -9,6 +9,7 @@ import java.lang.reflect.Field
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
+import java.util.UUID
 import javax.persistence.criteria.Path
 import javax.persistence.criteria.Root
 
@@ -40,6 +41,8 @@ data class ParsedField<T>(
       fieldClass.type == Boolean::class.java ||
         // this solves conflicts between kotlin/java
         fieldClass.type.name == "java.lang.Boolean" -> BOOLEAN
+
+      fieldClass.type == UUID::class.java -> FieldType.UUID
 
       fieldClass.type == Int::class.java ||
         fieldClass.type == Long::class.java ||

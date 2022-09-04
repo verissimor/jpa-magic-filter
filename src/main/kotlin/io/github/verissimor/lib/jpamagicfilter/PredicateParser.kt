@@ -11,6 +11,7 @@ import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.GENERIC
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.INSTANT
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.LOCAL_DATE
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.NUMBER
+import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.UUID
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.EQUAL
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.GREATER_THAN
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.GREATER_THAN_EQUAL
@@ -98,7 +99,7 @@ object PredicateParser {
     LOCAL_DATE -> cb.equal(parsedField.getPath<LocalDate>(), value.toSingleDate())
     INSTANT -> cb.equal(parsedField.getPath<Instant>(), value.toSingleInstant())
     BOOLEAN -> cb.equal(parsedField.getPath<Boolean>(), value.toSingleBoolean())
-    GENERIC -> cb.equal(parsedField.getPath<String>(), value.toSingleString())
+    GENERIC, UUID -> cb.equal(parsedField.getPath<String>(), value.toSingleString())
     null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseEqual")
   }
 
@@ -106,28 +107,28 @@ object PredicateParser {
     NUMBER -> cb.gt(parsedField.getPath<Number>(), value.toSingleBigDecimal())
     LOCAL_DATE -> cb.greaterThan(parsedField.getPath<LocalDate>(), value.toSingleDate())
     INSTANT -> cb.greaterThan(parsedField.getPath<Instant>(), value.toSingleInstant())
-    ENUMERATED, GENERIC, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThan")
+    ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThan")
   }
 
   private fun <T> parseGreaterThanEqual(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder) = when (parsedField.getFieldType()) {
     NUMBER -> cb.ge(parsedField.getPath<Number>(), value.toSingleBigDecimal())
     LOCAL_DATE -> cb.greaterThanOrEqualTo(parsedField.getPath<LocalDate>(), value.toSingleDate())
     INSTANT -> cb.greaterThanOrEqualTo(parsedField.getPath<Instant>(), value.toSingleInstant())
-    ENUMERATED, GENERIC, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThanEqual")
+    ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThanEqual")
   }
 
   private fun <T> parseLessThan(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder) = when (parsedField.getFieldType()) {
     NUMBER -> cb.lt(parsedField.getPath<Number>(), value.toSingleBigDecimal())
     LOCAL_DATE -> cb.lessThan(parsedField.getPath<LocalDate>(), value.toSingleDate())
     INSTANT -> cb.lessThan(parsedField.getPath<Instant>(), value.toSingleInstant())
-    ENUMERATED, GENERIC, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThan")
+    ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThan")
   }
 
   private fun <T> parseLessThanEqual(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder) = when (parsedField.getFieldType()) {
     NUMBER -> cb.le(parsedField.getPath<Number>(), value.toSingleBigDecimal())
     LOCAL_DATE -> cb.lessThanOrEqualTo(parsedField.getPath<LocalDate>(), value.toSingleDate())
     INSTANT -> cb.lessThanOrEqualTo(parsedField.getPath<Instant>(), value.toSingleInstant())
-    ENUMERATED, GENERIC, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThanEqual")
+    ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThanEqual")
   }
 
   private fun <T> parseInValues(parsedField: ParsedField<T>, value: Array<String>?, params: Map<String, Array<String>?>): List<String> {
@@ -149,7 +150,7 @@ object PredicateParser {
       NUMBER -> parsedField.getPath<Number>().`in`(values.map { it.toBigDecimal() })
       LOCAL_DATE -> parsedField.getPath<LocalDate>().`in`(values.map { LocalDate.parse(it) })
       INSTANT -> parsedField.getPath<Instant>().`in`(values.map { Instant.parse(it) })
-      GENERIC -> parsedField.getPath<String>().`in`(values)
+      GENERIC, UUID -> parsedField.getPath<String>().`in`(values)
       BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseIn")
     }
   }
@@ -162,7 +163,7 @@ object PredicateParser {
       NUMBER -> parsedField.getPath<Number>().`in`(values.map { it.toBigDecimal() }).not()
       LOCAL_DATE -> parsedField.getPath<LocalDate>().`in`(values.map { LocalDate.parse(it) }).not()
       INSTANT -> parsedField.getPath<Instant>().`in`(values.map { Instant.parse(it) }).not()
-      GENERIC -> parsedField.getPath<String>().`in`(values).not()
+      GENERIC, UUID -> parsedField.getPath<String>().`in`(values).not()
       BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseNotIn")
     }
   }

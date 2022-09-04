@@ -11,6 +11,7 @@ import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.GENERIC
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.INSTANT
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.LOCAL_DATE
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.NUMBER
+import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.UUID
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.EQUAL
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.GREATER_THAN
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.GREATER_THAN_EQUAL
@@ -61,7 +62,7 @@ object R2dbcPredicateParser {
     }
 
     when (parsedField.filterOperator) {
-      EQUAL -> parseEqual(parsedField, value).ignoreCase(true)
+      EQUAL -> parseEqual(parsedField, value)
 
       GREATER_THAN -> parseGreaterThan(parsedField, value)
       GREATER_THAN_EQUAL -> parseGreaterThanEqual(parsedField, value)
@@ -102,12 +103,13 @@ object R2dbcPredicateParser {
   }
 
   private fun parseEqual(parsedField: R2dbcParsedField, value: Array<String>) = when (parsedField.getFieldType()) {
-    ENUMERATED -> where(parsedField.resolvedFieldName).`is`(value.toSingleString()!!)
-    NUMBER -> where(parsedField.resolvedFieldName).`is`(value.toSingleBigDecimal()!!)
-    LOCAL_DATE -> where(parsedField.resolvedFieldName).`is`(value.toSingleDate()!!)
-    INSTANT -> where(parsedField.resolvedFieldName).`is`(value.toSingleInstant()!!)
-    BOOLEAN -> where(parsedField.resolvedFieldName).`is`(value.toSingleBoolean()!!)
-    GENERIC -> where(parsedField.resolvedFieldName).`is`(value.toSingleString()!!)
+    ENUMERATED -> where(parsedField.resolvedFieldName).`is`(value.toSingleString()!!).ignoreCase(true)
+    NUMBER -> where(parsedField.resolvedFieldName).`is`(value.toSingleBigDecimal()!!).ignoreCase(true)
+    LOCAL_DATE -> where(parsedField.resolvedFieldName).`is`(value.toSingleDate()!!).ignoreCase(true)
+    INSTANT -> where(parsedField.resolvedFieldName).`is`(value.toSingleInstant()!!).ignoreCase(true)
+    BOOLEAN -> where(parsedField.resolvedFieldName).`is`(value.toSingleBoolean()!!).ignoreCase(true)
+    UUID -> where(parsedField.resolvedFieldName).`is`(value.toSingleString()!!)
+    GENERIC -> where(parsedField.resolvedFieldName).`is`(value.toSingleString()!!).ignoreCase(true)
     null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseEqual")
   }
 
@@ -115,28 +117,28 @@ object R2dbcPredicateParser {
     NUMBER -> where(parsedField.resolvedFieldName).greaterThan(value.toSingleBigDecimal()!!)
     LOCAL_DATE -> where(parsedField.resolvedFieldName).greaterThan(value.toSingleDate()!!)
     INSTANT -> where(parsedField.resolvedFieldName).greaterThan(value.toSingleInstant()!!)
-    ENUMERATED, GENERIC, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThan")
+    ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThan")
   }
 
   private fun parseGreaterThanEqual(parsedField: R2dbcParsedField, value: Array<String>?) = when (parsedField.getFieldType()) {
     NUMBER -> where(parsedField.resolvedFieldName).greaterThanOrEquals(value.toSingleBigDecimal()!!)
     LOCAL_DATE -> where(parsedField.resolvedFieldName).greaterThanOrEquals(value.toSingleDate()!!)
     INSTANT -> where(parsedField.resolvedFieldName).greaterThanOrEquals(value.toSingleInstant()!!)
-    ENUMERATED, GENERIC, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThanEqual")
+    ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThanEqual")
   }
 
   private fun parseLessThan(parsedField: R2dbcParsedField, value: Array<String>?) = when (parsedField.getFieldType()) {
     NUMBER -> where(parsedField.resolvedFieldName).lessThan(value.toSingleBigDecimal()!!)
     LOCAL_DATE -> where(parsedField.resolvedFieldName).lessThan(value.toSingleDate()!!)
     INSTANT -> where(parsedField.resolvedFieldName).lessThan(value.toSingleInstant()!!)
-    ENUMERATED, GENERIC, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThan")
+    ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThan")
   }
 
   private fun parseLessThanEqual(parsedField: R2dbcParsedField, value: Array<String>?) = when (parsedField.getFieldType()) {
     NUMBER -> where(parsedField.resolvedFieldName).lessThanOrEquals(value.toSingleBigDecimal()!!)
     LOCAL_DATE -> where(parsedField.resolvedFieldName).lessThanOrEquals(value.toSingleDate()!!)
     INSTANT -> where(parsedField.resolvedFieldName).lessThanOrEquals(value.toSingleInstant()!!)
-    ENUMERATED, GENERIC, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThanEqual")
+    ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThanEqual")
   }
 
   private fun parseInValues(parsedField: R2dbcParsedField, value: Array<String>?, params: Map<String, Array<String>?>): List<String> {
@@ -158,7 +160,7 @@ object R2dbcPredicateParser {
       NUMBER -> where(parsedField.resolvedFieldName).`in`(values.map { it.toBigDecimal() })
       LOCAL_DATE -> where(parsedField.resolvedFieldName).`in`(values.map { LocalDate.parse(it) })
       INSTANT -> where(parsedField.resolvedFieldName).`in`(values.map { Instant.parse(it) })
-      GENERIC -> where(parsedField.resolvedFieldName).`in`(values)
+      GENERIC, UUID -> where(parsedField.resolvedFieldName).`in`(values)
       BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseIn")
     }
   }
@@ -171,7 +173,7 @@ object R2dbcPredicateParser {
       NUMBER -> where(parsedField.resolvedFieldName).notIn(values.map { it.toBigDecimal() })
       LOCAL_DATE -> where(parsedField.resolvedFieldName).notIn(values.map { LocalDate.parse(it) })
       INSTANT -> where(parsedField.resolvedFieldName).notIn(values.map { Instant.parse(it) })
-      GENERIC -> where(parsedField.resolvedFieldName).notIn(values)
+      GENERIC, UUID -> where(parsedField.resolvedFieldName).notIn(values)
       BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseNotIn")
     }
   }
