@@ -53,14 +53,14 @@ MAVEN
 <dependency>
     <groupId>io.github.verissimor.lib</groupId>
     <artifactId>jpa-magic-filter</artifactId>
-    <version>1.0.2</version>
+    <version>${version}</version>
 </dependency>
 ```
 
 GRADLE
 
 ```kotlin
-implementation 'io.github.verissimor.lib:jpa-magic-filter:1.0.2'
+implementation 'io.github.verissimor.lib:jpa-magic-filter:${version}'
 ```
 
 Enable it on your application:
@@ -152,6 +152,7 @@ where u.name like '%Matthew%' and u.age > 23 and c.name = 'London'
 | Operator           | Suffix        | Example                     |
 |--------------------|---------------|-----------------------------|
 | EQUAL              |               | `?name=Matthew`             |
+| NOT_EQUAL          | _ne           | `?age_ne=32`                |
 | GREATER_THAN       | _gt           | `?age_gt=32`                |
 | GREATER_THAN_EQUAL | _ge           | `?age_ge=32`                |
 | LESS_THAN          | _lt           | `?age_lt=32`                |

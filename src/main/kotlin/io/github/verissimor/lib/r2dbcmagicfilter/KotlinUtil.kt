@@ -23,5 +23,5 @@ fun <T, V> KProperty1<T, V?>.notLike(value: Any): Pair<String, Any> = name + "_n
 fun <T, V> KProperty1<T, V?>.notLikeExp(value: Any): Pair<String, Any> = name + "_not_like_exp" to value.toString()
 fun <T, V> KProperty1<T, V?>.`in`(value: Any): Pair<String, Any> = name + "_in" to value.toString()
 fun <T, V> KProperty1<T, V?>.notIn(value: Any): Pair<String, Any> = name + "_not_in" to value.toString()
-fun <T, V> KProperty1<T, V?>.isNull(value: Any): Pair<String, Any> = name + "_is_null" to value.toString()
-fun <T, V> KProperty1<T, V?>.isNotNull(value: Any): Pair<String, Any> = name + "_is_not_null" to value.toString()
+fun <T, V> KProperty1<T, V?>.isNull(): Pair<String, Any> = name + "_is_null" to ""
+fun <T, V> KProperty1<T, V?>.isNotNull(): Pair<String, Any> = name + "_is_not_null" to ""

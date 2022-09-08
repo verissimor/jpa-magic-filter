@@ -22,6 +22,7 @@ import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.LESS_THAN
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.LESS_THAN_EQUAL
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.LIKE
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.LIKE_EXP
+import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.NOT_EQUAL
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.NOT_IN
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.NOT_LIKE
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.NOT_LIKE_EXP
@@ -54,6 +55,7 @@ object PredicateParser {
 
     when (parsedField.filterOperator) {
       EQUAL -> parseEqual(parsedField, value, cb)
+      NOT_EQUAL -> parseEqual(parsedField, value, cb).not()
 
       GREATER_THAN -> parseGreaterThan(parsedField, value, cb)
       GREATER_THAN_EQUAL -> parseGreaterThanEqual(parsedField, value, cb)
