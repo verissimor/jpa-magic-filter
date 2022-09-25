@@ -15,7 +15,7 @@ class R2dbcMagicFilter(
   private val parameterMap: MultiValueMap<String, String>
 ) {
 
-  val log: Logger = LoggerFactory.getLogger(R2dbcMagicFilter::class.java)
+  private val log: Logger = LoggerFactory.getLogger(R2dbcMagicFilter::class.java)
 
   fun toCriteria(clazz: Class<*>, dbFeatures: DbFeatures = NONE): Criteria {
 

@@ -17,6 +17,8 @@ enum class FilterOperator(val suffix: String) {
   IS_NULL("_is_null"),
   IS_NOT_NULL("_is_not_null"),
 
+  BETWEEN("_is_between"),
+
   NOT_EQUAL("_ne"),
   EQUAL("")
 }

@@ -29,6 +29,16 @@ class R2dbcMagicFilterInTest {
   }
 
   @Test
+  fun `test in date repeated param becoming between`() {
+    val params = listOf("createdDate" to "2022-01-01", "createdDate" to "2022-12-31").toMultiMap()
+    val filter = R2dbcMagicFilter(params)
+
+    val criteria = filter.toCriteria(ReactiveUser::class.java)
+
+    assertThat(criteria.toString()).isEqualTo("createdDate BETWEEN 2022-01-01 AND 2022-12-31")
+  }
+
+  @Test
   fun `test in enum`() {
     val params = listOf("gender_in" to "MALE,FEMALE").toMultiMap()
     val filter = R2dbcMagicFilter(params)

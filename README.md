@@ -299,7 +299,7 @@ If you'd like to contribute code to this project you can do so through GitHub by
 By contributing your code, you agree to license your contribution under the terms of the Apache Licence.
 
 ## TODO
-1. add reactive example
-2. rename the examples
+1. √ add reactive example
+2. add documentation for between
 3. remove the SEARCH_IN_SEPARATOR_PRM & SEARCH_IN_SEPARATOR_DEF
 4. remove POSTGRES unaccent for reactive

@@ -12,6 +12,7 @@ import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.INSTANT
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.LOCAL_DATE
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.NUMBER
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.UUID
+import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.EQUAL
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.GREATER_THAN
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.GREATER_THAN_EQUAL
@@ -81,6 +82,8 @@ object R2dbcPredicateParser {
 
       IS_NULL -> where(parsedField.resolvedFieldName).isNull
       IS_NOT_NULL -> where(parsedField.resolvedFieldName).isNotNull
+
+      FilterOperator.BETWEEN -> parseBetween(parsedField, value, params)
     }
   }
 
@@ -188,6 +191,17 @@ object R2dbcPredicateParser {
       INSTANT -> where(parsedField.resolvedFieldName).notIn(values.map { Instant.parse(it) })
       GENERIC, UUID -> where(parsedField.resolvedFieldName).notIn(values)
       BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseNotIn")
+    }
+  }
+
+  private fun parseBetween(parsedField: R2dbcParsedField, value: Array<String>?, params: Map<String, Array<String>?>): Criteria {
+    val values = parseInValues(parsedField, value, params)
+
+    return when (parsedField.getFieldType()) {
+      NUMBER -> where(parsedField.resolvedFieldName).between(values[0].toBigDecimal(), values[1].toBigDecimal())
+      LOCAL_DATE -> where(parsedField.resolvedFieldName).between(values[0].let { LocalDate.parse(it) }, values[1].let { LocalDate.parse(it) })
+      INSTANT -> where(parsedField.resolvedFieldName).between(values[0].let { Instant.parse(it) }, values[1].let { Instant.parse(it) })
+      GENERIC, UUID, ENUMERATED, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseIn")
     }
   }
 }

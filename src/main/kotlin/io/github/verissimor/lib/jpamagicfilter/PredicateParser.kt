@@ -12,6 +12,7 @@ import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.INSTANT
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.LOCAL_DATE
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.NUMBER
 import io.github.verissimor.lib.jpamagicfilter.domain.FieldType.UUID
+import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.BETWEEN
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.EQUAL
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.GREATER_THAN
 import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.GREATER_THAN_EQUAL
@@ -29,6 +30,7 @@ import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator.NOT_LIKE_EX
 import io.github.verissimor.lib.jpamagicfilter.domain.ParsedField
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
 import javax.persistence.criteria.CriteriaBuilder
@@ -72,6 +74,8 @@ object PredicateParser {
 
       IS_NULL -> cb.isNull(parsedField.getPath<Any>())
       IS_NOT_NULL -> cb.isNotNull(parsedField.getPath<Any>())
+
+      BETWEEN -> parseBetween(parsedField, value, params, cb)
     }
   }
 
@@ -167,6 +171,17 @@ object PredicateParser {
       INSTANT -> parsedField.getPath<Instant>().`in`(values.map { Instant.parse(it) }).not()
       GENERIC, UUID -> parsedField.getPath<String>().`in`(values).not()
       BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseNotIn")
+    }
+  }
+
+  private fun <T> parseBetween(parsedField: ParsedField<T>, value: Array<String>?, params: Map<String, Array<String>?>, cb: CriteriaBuilder): Predicate? {
+    val values = parseInValues(parsedField, value, params)
+
+    return when (parsedField.getFieldType()) {
+      NUMBER -> cb.between(parsedField.getPath<BigDecimal>(), values[0].toBigDecimal(), values[1].toBigDecimal())
+      LOCAL_DATE -> cb.between(parsedField.getPath<LocalDate>(), values[0].let { LocalDate.parse(it) }, values[1].let { LocalDate.parse(it) })
+      INSTANT -> cb.between(parsedField.getPath<Instant>(), values[0].let { Instant.parse(it) }, values[1].let { Instant.parse(it) })
+      GENERIC, UUID, ENUMERATED, BOOLEAN, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseIn")
     }
   }
 }

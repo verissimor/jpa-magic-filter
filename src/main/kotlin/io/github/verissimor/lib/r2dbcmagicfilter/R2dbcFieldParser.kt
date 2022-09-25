@@ -32,11 +32,16 @@ object R2dbcFieldParser {
 
   private fun overloadFilterOperator(filterOperator: FilterOperator, value: Array<String>?, fieldClass: Field?): FilterOperator {
     val shouldTryOverload = value != null && filterOperator == FilterOperator.EQUAL
+    val fieldType: FieldType? = ParsedField.getFieldType(fieldClass)
+
+    if (shouldTryOverload && value!!.size > 1 && fieldType == FieldType.LOCAL_DATE) {
+      return FilterOperator.BETWEEN
+    }
+
     if (shouldTryOverload && value!!.size > 1) {
       return FilterOperator.IN
     }
 
-    val fieldType: FieldType? = ParsedField.getFieldType(fieldClass)
     if (shouldTryOverload && fieldType == FieldType.NUMBER && value!!.toSingleString()!!.contains(",")) {
       return FilterOperator.IN
     }
