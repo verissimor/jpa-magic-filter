@@ -109,10 +109,10 @@ object R2dbcPredicateParser {
 
   private fun parseEqual(parsedField: R2dbcParsedField, value: Array<String>) = when (parsedField.getFieldType()) {
     ENUMERATED -> where(parsedField.resolvedFieldName).`is`(value.toSingleString()!!).ignoreCase(true)
-    NUMBER -> where(parsedField.resolvedFieldName).`is`(value.toSingleBigDecimal()!!).ignoreCase(true)
-    LOCAL_DATE -> where(parsedField.resolvedFieldName).`is`(value.toSingleDate()!!).ignoreCase(true)
-    INSTANT -> where(parsedField.resolvedFieldName).`is`(value.toSingleInstant()!!).ignoreCase(true)
-    BOOLEAN -> where(parsedField.resolvedFieldName).`is`(value.toSingleBoolean()!!).ignoreCase(true)
+    NUMBER -> where(parsedField.resolvedFieldName).`is`(value.toSingleBigDecimal()!!)
+    LOCAL_DATE -> where(parsedField.resolvedFieldName).`is`(value.toSingleDate()!!)
+    INSTANT -> where(parsedField.resolvedFieldName).`is`(value.toSingleInstant()!!)
+    BOOLEAN -> where(parsedField.resolvedFieldName).`is`(value.toSingleBoolean()!!)
     UUID -> where(parsedField.resolvedFieldName).`is`(value.toSingleString()!!)
     GENERIC -> where(parsedField.resolvedFieldName).`is`(value.toSingleString()!!).ignoreCase(true)
     null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseEqual")
@@ -120,10 +120,10 @@ object R2dbcPredicateParser {
 
   private fun parseNotEqual(parsedField: R2dbcParsedField, value: Array<String>) = when (parsedField.getFieldType()) {
     ENUMERATED -> where(parsedField.resolvedFieldName).not(value.toSingleString()!!).ignoreCase(true)
-    NUMBER -> where(parsedField.resolvedFieldName).not(value.toSingleBigDecimal()!!).ignoreCase(true)
-    LOCAL_DATE -> where(parsedField.resolvedFieldName).not(value.toSingleDate()!!).ignoreCase(true)
-    INSTANT -> where(parsedField.resolvedFieldName).not(value.toSingleInstant()!!).ignoreCase(true)
-    BOOLEAN -> where(parsedField.resolvedFieldName).not(value.toSingleBoolean()!!).ignoreCase(true)
+    NUMBER -> where(parsedField.resolvedFieldName).not(value.toSingleBigDecimal()!!)
+    LOCAL_DATE -> where(parsedField.resolvedFieldName).not(value.toSingleDate()!!)
+    INSTANT -> where(parsedField.resolvedFieldName).not(value.toSingleInstant()!!)
+    BOOLEAN -> where(parsedField.resolvedFieldName).not(value.toSingleBoolean()!!)
     UUID -> where(parsedField.resolvedFieldName).not(value.toSingleString()!!)
     GENERIC -> where(parsedField.resolvedFieldName).not(value.toSingleString()!!).ignoreCase(true)
     null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseEqual")
