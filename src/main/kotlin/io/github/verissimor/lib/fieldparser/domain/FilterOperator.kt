@@ -1,6 +1,6 @@
-package io.github.verissimor.lib.jpamagicfilter.domain
+package io.github.verissimor.lib.fieldparser.domain
 
-enum class FilterOperator(val suffix: String) {
+enum class FilterOperator(val suffix: String, val allowNullableValue: Boolean = false) {
   GREATER_THAN("_gt"),
   GREATER_THAN_EQUAL("_ge"),
   LESS_THAN("_lt"),
@@ -14,8 +14,8 @@ enum class FilterOperator(val suffix: String) {
   IN("_in"),
   NOT_IN("_not_in"),
 
-  IS_NULL("_is_null"),
-  IS_NOT_NULL("_is_not_null"),
+  IS_NULL("_is_null", true),
+  IS_NOT_NULL("_is_not_null", true),
 
   BETWEEN("_is_between"),
 

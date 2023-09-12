@@ -1,5 +1,7 @@
 package io.github.verissimor.lib.r2dbcmagicfilter
 
+import io.github.verissimor.lib.r2dbcmagicfilter.sqlwriter.SqlBinder
+import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import kotlin.reflect.KProperty1
@@ -25,3 +27,13 @@ fun <T, V> KProperty1<T, V?>.inValues(value: Collection<Any>): Pair<String, Any>
 fun <T, V> KProperty1<T, V?>.notInValues(value: Collection<Any>): Pair<String, Any> = name + "_not_in" to value.joinToString(",") { it.toString() }
 fun <T, V> KProperty1<T, V?>.isNull(): Pair<String, Any> = name + "_is_null" to ""
 fun <T, V> KProperty1<T, V?>.isNotNull(): Pair<String, Any> = name + "_is_not_null" to ""
+
+fun DatabaseClient.sql(sql: String, binder: SqlBinder?): DatabaseClient.GenericExecuteSpec {
+  val startSql = this.sql(sql)
+
+  if (binder == null) return startSql
+
+  return binder.params.toList().fold(startSql) { acc, pair ->
+    acc.bind(pair.first, pair.second)
+  }
+}

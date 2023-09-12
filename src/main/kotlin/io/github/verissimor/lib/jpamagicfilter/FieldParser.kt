@@ -1,6 +1,6 @@
 package io.github.verissimor.lib.jpamagicfilter
 
-import io.github.verissimor.lib.jpamagicfilter.domain.FilterOperator
+import io.github.verissimor.lib.fieldparser.domain.FilterOperator
 import io.github.verissimor.lib.jpamagicfilter.domain.ParsedField
 import java.lang.reflect.Field
 import javax.persistence.criteria.Root

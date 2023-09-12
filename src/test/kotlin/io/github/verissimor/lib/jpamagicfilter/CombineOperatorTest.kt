@@ -4,7 +4,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 
-class SearchTypeTest : BaseTest() {
+class CombineOperatorTest : BaseTest() {
 
   @Test
   fun `should filter like`() {
