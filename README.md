@@ -165,10 +165,7 @@ where u.name like '%Matthew%' and u.age > 23 and c.name = 'London'
 | NOT_IN             | _not_in       | `?age_not_in=23,24,25,26`   |
 | IS_NULL            | _is_null      | `?age_is_null`              |
 | IS_NOT_NULL        | _is_not_null  | `?age_is_not_null`          |
-
-### GREATER_THAN / LESS_THAN vs Between
-
-There is no support for `between`. You can achieve it by using the combination of a `GREATER_THAN` and `LESS_THAN`.
+| BETWEEN            | _is_between   | `?age_is_between=22,30`     |
 
 ### LIKE vs LIKE_EXP
 
@@ -235,6 +232,24 @@ Execute a GET call using:
 // more info: https://docs.spring.io/spring-data/rest/docs/current/reference/html/#paging-and-sorting.sorting
 ```
 
+# Groups and combine Operators
+
+It's supported to change the operator. To do so, add `or__` at the start of your parameter.
+
+Eg.: the following expression:
+`?success=1&or__active=1`, would render as:
+`success = 1 or active = 1`
+
+It's also supported groups, by adding a double underscore and a number at the end of the parameter. 
+
+Each group will be rendered inside a 'and/or' criteria.
+
+Eg.: the following expression:
+`?name__1=Joe&age__1=35&success__2=1&active__2=1`, would render as:
+`(name = 'Joe' and age = 35) and (success = 1 and active = 1)`
+
+The concatenation of groups is done by `&searchType=and` or `&searchType=or`.
+
 # Integrate with other business rules
 
 Let's say there is in place a rule that says: `Users can only see users that are in the same city`.
@@ -271,6 +286,28 @@ val filter = mapOf(
   User::name.like("Matthew"),
   User::age.gt(20)
 ).toR2dbcMagicFilter()
+```
+
+## Writing native sql queries
+
+Spring R2dbc doesn't have support to joins 🫠. When this is required, then it's needed to use native queries.
+
+```kotlin
+@Autowired protected lateinit var template: R2dbcEntityTemplate
+@Autowired protected lateinit var converter: MappingR2dbcConverter
+
+val sqlBinder = r2dbcMagicFilter.toSqlBinder(ReactiveUser::class.java, "t")
+val sql = """
+  SELECT t.*
+  FROM user t
+    LEFT JOIN city c ON c.id = t.city_id
+  WHERE c.country = :country ${sqlBinder?.sql}
+  """
+val rows = template.databaseClient.sql(sql, sqlBinder)
+  .bind("country", "US")
+  .map { row, metadata -> converter.read(ReactiveUser::class.java, row, metadata) }
+  .all()
+  .asFlow()
 ```
 
 ## Advanced Postgres Function

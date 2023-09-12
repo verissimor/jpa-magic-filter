@@ -3,6 +3,7 @@ package io.github.verissimor.lib.r2dbcmagicfilter.domain
 import io.github.verissimor.lib.jpamagicfilter.Gender
 import java.time.Instant
 import java.time.LocalDate
+import java.util.UUID
 import javax.persistence.Id
 import javax.persistence.Table
 
@@ -16,5 +17,6 @@ data class ReactiveUser(
   val cityId: Long?,
   val createdDate: LocalDate?,
   val createdAt: Instant?,
-  val enabled: Boolean
+  val enabled: Boolean,
+  val uuid: UUID
 )
