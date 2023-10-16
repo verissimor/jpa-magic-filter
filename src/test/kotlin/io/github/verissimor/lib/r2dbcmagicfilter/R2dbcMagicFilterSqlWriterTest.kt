@@ -17,7 +17,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.name = :name0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name = :name0)")
     assertThat(sqlBinder?.params?.get("name0")).isEqualTo("Joe")
   }
 
@@ -28,7 +28,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.age > :age0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.age > :age0)")
     assertThat(sqlBinder?.params?.get("age0")).isEqualTo(BigDecimal(35))
   }
 
@@ -39,7 +39,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.age >= :age0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.age >= :age0)")
     assertThat(sqlBinder?.params?.get("age0")).isEqualTo(BigDecimal(35))
   }
 
@@ -50,7 +50,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.age < :age0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.age < :age0)")
     assertThat(sqlBinder?.params?.get("age0")).isEqualTo(BigDecimal(40))
   }
 
@@ -61,7 +61,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.age <= :age0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.age <= :age0)")
     assertThat(sqlBinder?.params?.get("age0")).isEqualTo(BigDecimal(40))
   }
 
@@ -72,7 +72,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.name LIKE :name0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name LIKE :name0)")
     assertThat(sqlBinder?.params?.get("name0")).isEqualTo("John")
   }
 
@@ -83,7 +83,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.name LIKE :name0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name LIKE :name0)")
     assertThat(sqlBinder?.params?.get("name0")).isEqualTo("Doe")
   }
 
@@ -94,7 +94,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.name NOT LIKE :name0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name NOT LIKE :name0)")
     assertThat(sqlBinder?.params?.get("name0")).isEqualTo("Smith")
   }
 
@@ -105,7 +105,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.name NOT LIKE :name0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name NOT LIKE :name0)")
     assertThat(sqlBinder?.params?.get("name0")).isEqualTo("Johnson")
   }
 
@@ -116,7 +116,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.age IN (:age0)")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.age IN (:age0))")
     assertThat(sqlBinder?.params?.get("age0")).isEqualTo(listOf(30, 35, 40).map { it.toBigDecimal() })
   }
 
@@ -127,7 +127,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.age NOT IN (:age0)")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.age NOT IN (:age0))")
     assertThat(sqlBinder?.params?.get("age0")).isEqualTo(listOf(25, 50).map { it.toBigDecimal() })
   }
 
@@ -138,7 +138,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.name IS NULL")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name IS NULL)")
     assertThat(sqlBinder?.params).isEmpty()
   }
 
@@ -149,7 +149,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.name IS NOT NULL")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name IS NOT NULL)")
     assertThat(sqlBinder?.params).isEmpty()
   }
 
@@ -160,7 +160,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder!!.sql).isEqualTo(" AND b.age BETWEEN :age0a AND :age0b")
+    assertThat(sqlBinder!!.sql).isEqualTo(" AND (b.age BETWEEN :age0a AND :age0b)")
     assertThat(sqlBinder.params["age0a"]).isEqualTo(BigDecimal(19))
     assertThat(sqlBinder.params["age0b"]).isEqualTo(BigDecimal(35))
   }
@@ -172,7 +172,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.age <> :age0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.age <> :age0)")
     assertThat(sqlBinder?.params?.get("age0")).isEqualTo(BigDecimal(25))
   }
 
@@ -183,7 +183,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.created_date = :createdDate0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.created_date = :createdDate0)")
     assertThat(sqlBinder?.params?.get("createdDate0")).isEqualTo(LocalDate.parse("2022-12-31"))
   }
 
@@ -195,7 +195,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.created_at = :createdAt0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.created_at = :createdAt0)")
     assertThat(sqlBinder?.params?.get("createdAt0")).isEqualTo(Instant.parse(now))
   }
 
@@ -206,7 +206,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.enabled = :enabled0")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.enabled = :enabled0)")
     assertThat(sqlBinder?.params?.get("enabled0")).isEqualTo(false)
   }
 
@@ -217,7 +217,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.name = :name0 AND b.age > :age1")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name = :name0 AND b.age > :age1)")
     assertThat(sqlBinder?.params?.get("name0")).isEqualTo("Joe")
     assertThat(sqlBinder?.params?.get("age1")).isEqualTo(BigDecimal(35))
   }
@@ -229,7 +229,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND b.name = :name0 OR b.age > :age1")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name = :name0 OR b.age > :age1)")
     assertThat(sqlBinder?.params?.get("name0")).isEqualTo("Joe")
     assertThat(sqlBinder?.params?.get("age1")).isEqualTo(BigDecimal(35))
   }

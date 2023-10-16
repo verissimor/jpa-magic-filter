@@ -119,8 +119,8 @@ class R2dbcMagicFilter(
     }
 
     if (groups.size == 1) {
-      val startBinder = SqlBinder(startStr, emptyMap())
-      return startBinder + R2dbcSqlWriter.writeSql(parseFields, tableAlias)
+      val binder = R2dbcSqlWriter.writeSql(parseFields, tableAlias)
+      return SqlBinder("$startStr(${binder.sql})", binder.params)
     }
 
     // first reduce/fold criteria in the group

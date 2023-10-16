@@ -19,7 +19,7 @@ plugins {
 }
 
 group = "io.github.verissimor.lib"
-version = System.getenv("RELEASE_VERSION") ?: "1.0.7-SNAPSHOT"
+version = System.getenv("RELEASE_VERSION") ?: "1.0.8-SNAPSHOT"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
