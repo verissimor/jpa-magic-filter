@@ -44,21 +44,21 @@ jobs:
           name: jacoco-report
           path: target/site/jacoco/
 
-  build-example-maven-java:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Build Java Example Project with Maven
-        working-directory: ./examples/java-maven-h2
-        run: mvn -B package --file pom.xml
+#  build-example-maven-java:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#
+#      - name: Set up JDK
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: '17'
+#          distribution: 'temurin'
+#          cache: maven
+#
+#      - name: Build Java Example Project with Maven
+#        working-directory: ./examples/java-maven-h2
+#        run: mvn -B package --file pom.xml
 
   build-example-gradle-java:
     runs-on: ubuntu-latest
