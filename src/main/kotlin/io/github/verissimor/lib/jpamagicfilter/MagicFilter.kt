@@ -8,18 +8,21 @@ import java.time.Instant
 import java.time.LocalDate
 
 class MagicFilter(
-  private val parameterMap: Map<String, Array<String>>
+  private val parameterMap: Map<String, Array<String>>,
 ) {
+  fun <T> toSpecification(
+    clazz: Class<*>,
+    dbFeatures: DbFeatures,
+  ): Specification<T> =
+    Specification { root, _, cb ->
+      val parsed = PredicateParser.parsePredicates<T>(parameterMap, clazz, root, cb, dbFeatures)
 
-  fun <T> toSpecification(clazz: Class<*>, dbFeatures: DbFeatures): Specification<T> = Specification { root, _, cb ->
-    val parsed = PredicateParser.parsePredicates(parameterMap, clazz, root, cb, dbFeatures)
-
-    when (parameterMap.toSingleParameter(SEARCH_TYPE_PRM)) {
-      SEARCH_TYPE_AND, null -> cb.and(*parsed.toTypedArray())
-      SEARCH_TYPE_OR -> cb.or(*parsed.toTypedArray())
-      else -> error("Invalid searchType. Only allowed: and, or")
+      when (parameterMap.toSingleParameter(SEARCH_TYPE_PRM)) {
+        SEARCH_TYPE_AND, null -> cb.and(*parsed.toTypedArray())
+        SEARCH_TYPE_OR -> cb.or(*parsed.toTypedArray())
+        else -> error("Invalid searchType. Only allowed: and, or")
+      }
     }
-  }
 
   fun <T> toSpecification(clazz: Class<*>): Specification<T> = toSpecification(clazz, NONE)
 
@@ -33,8 +36,13 @@ class MagicFilter(
 }
 
 fun Map<String, Array<String>?>.toSingleParameter(key: String): Any? = this[key]?.firstOrNull()
+
 fun Array<String>?.toSingleBigDecimal(): BigDecimal? = this?.firstOrNull()?.toString()?.toBigDecimal()
+
 fun Array<String>?.toSingleString(): String? = this?.firstOrNull()?.toString()
+
 fun Array<String>?.toSingleDate(): LocalDate? = this?.firstOrNull()?.toString()?.let { LocalDate.parse(it) }
+
 fun Array<String>?.toSingleInstant(): Instant? = this?.firstOrNull()?.toString()?.let { Instant.parse(it) }
+
 fun Array<String>?.toSingleBoolean(): Boolean? = this?.firstOrNull()?.toString()?.toBoolean()

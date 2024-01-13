@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class FieldParserOperatorTest {
-
   @Test
   fun `should parse operator EQUAL`() {
     val params = listOf("name" to "Joe").toMultiMap()

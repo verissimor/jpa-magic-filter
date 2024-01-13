@@ -24,7 +24,11 @@ class R2dbcMagicFilterAttributeResolver : HandlerMethodArgumentResolver {
     return parameter.parameterType == R2dbcMagicFilter::class.java
   }
 
-  override fun resolveArgument(parameter: MethodParameter, bindingContext: BindingContext, exchange: ServerWebExchange): Mono<Any> {
+  override fun resolveArgument(
+    parameter: MethodParameter,
+    bindingContext: BindingContext,
+    exchange: ServerWebExchange,
+  ): Mono<Any> {
     return Mono.just(R2dbcMagicFilter(exchange.request.queryParams))
   }
 }

@@ -8,7 +8,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class FieldParserCombineOperatorTest {
-
   @Test
   fun `should parse combine operator`() {
     val params = listOf("name" to "Joe", "or__name" to "Jane").toMultiMap()

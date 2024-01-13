@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 
 class InstantFieldTypeTest : BaseTest() {
-
   @Test
   fun `should filter equals a Instant`() {
     mockMvc.get("/api/users?city.createdAt=2000-01-01T00:00:00.0Z")

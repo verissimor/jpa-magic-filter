@@ -2,28 +2,26 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Base64
 
 plugins {
-  id("org.springframework.boot") version "2.7.3"
-  id("io.spring.dependency-management") version "1.0.13.RELEASE"
-  kotlin("jvm") version "1.6.21"
-  kotlin("plugin.spring") version "1.6.21"
-  kotlin("plugin.jpa") version "1.6.21"
+  id("org.springframework.boot") version "3.2.1"
+  id("io.spring.dependency-management") version "1.1.4"
+  kotlin("jvm") version "1.9.21"
+  kotlin("plugin.spring") version "1.9.21"
+  kotlin("plugin.jpa") version "1.9.21"
 
-  kotlin("kapt") version "1.6.21"
-
-  id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
+  id("org.jlleitschuh.gradle.ktlint") version "12.0.3"
   `java-library`
   `maven-publish`
-  id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+  id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
   signing
   jacoco
 }
 
 group = "io.github.verissimor.lib"
-version = System.getenv("RELEASE_VERSION") ?: "1.0.8-SNAPSHOT"
+version = System.getenv("RELEASE_VERSION") ?: "3.2.1a-SNAPSHOT"
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
   withSourcesJar()
   withJavadocJar()
 }
@@ -50,8 +48,6 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-  kapt("org.springframework.boot:spring-boot-configuration-processor")
-
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")
 
@@ -59,13 +55,13 @@ dependencies {
   testImplementation("com.h2database:h2")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
   testImplementation("org.springframework.boot:spring-boot-starter-web")
-  testImplementation("org.springframework.data:spring-data-relational:2.4.2")
+  testImplementation("org.springframework.data:spring-data-relational")
 }
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
-    freeCompilerArgs = listOf("-Xjsr305=strict")
-    jvmTarget = "1.8"
+    freeCompilerArgs += "-Xjsr305=strict"
+    jvmTarget = "17"
   }
 }
 

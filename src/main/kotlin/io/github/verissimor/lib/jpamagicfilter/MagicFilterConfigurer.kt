@@ -22,7 +22,12 @@ class MagicFilterAttributeResolver : HandlerMethodArgumentResolver {
     return parameter.parameterType == MagicFilter::class.java
   }
 
-  override fun resolveArgument(parameter: MethodParameter, mavContainer: ModelAndViewContainer?, webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?): Any {
+  override fun resolveArgument(
+    parameter: MethodParameter,
+    mavContainer: ModelAndViewContainer?,
+    webRequest: NativeWebRequest,
+    binderFactory: WebDataBinderFactory?,
+  ): Any {
     return MagicFilter(webRequest.parameterMap)
   }
 }

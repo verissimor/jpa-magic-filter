@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 
 class LocalDateFieldTypeTest : BaseTest() {
-
   @Test
   fun `should filter equals a date`() {
     mockMvc.get("/api/users?createdDate=2000-05-16")

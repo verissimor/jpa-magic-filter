@@ -20,5 +20,5 @@ enum class FilterOperator(val suffix: String, val allowNullableValue: Boolean = 
   BETWEEN("_is_between"),
 
   NOT_EQUAL("_ne"),
-  EQUAL("")
+  EQUAL(""),
 }

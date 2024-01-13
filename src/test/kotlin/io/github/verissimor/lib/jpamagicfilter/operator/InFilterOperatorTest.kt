@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 
 class InFilterOperatorTest : BaseTest() {
-
   @Test
   fun `should filter in many values separated by comma`() {
     mockMvc.get("/api/users?age_in=19,21,31")

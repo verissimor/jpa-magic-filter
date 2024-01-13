@@ -2,9 +2,8 @@ package io.github.verissimor.lib.r2dbcmagicfilter.sqlwriter
 
 data class SqlBinder(
   val sql: String,
-  val params: Map<String, Any>
+  val params: Map<String, Any>,
 ) {
-
   operator fun plus(other: Any?): SqlBinder {
     if (other == null) return this
 

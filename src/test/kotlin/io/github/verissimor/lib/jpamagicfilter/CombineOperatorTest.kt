@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 
 class CombineOperatorTest : BaseTest() {
-
   @Test
   fun `should filter like`() {
     mockMvc.get("/api/users?age=19&gender=FEMALE&searchType=and")

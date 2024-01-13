@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 
 class EqualFilterOperatorTest : BaseTest() {
-
   @Test
   fun `should return all results when no filter present`() {
     mockMvc.get("/api/users")

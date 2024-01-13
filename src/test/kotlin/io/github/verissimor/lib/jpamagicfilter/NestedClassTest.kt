@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 
 class NestedClassTest : BaseTest() {
-
   @Test
   fun `should filter a nested class`() {
     mockMvc.get("/api/users?city.name=London")

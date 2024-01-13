@@ -10,7 +10,6 @@ import org.springframework.web.context.WebApplicationContext
 @AutoConfigureMockMvc
 @SpringBootTest(classes = [DemoApplication::class])
 abstract class BaseTest {
-
   @Autowired
   lateinit var objectMapper: ObjectMapper
 
