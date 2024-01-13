@@ -10,8 +10,6 @@ jobs:
   build-lib:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-java@v4
-
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -47,8 +45,6 @@ jobs:
   build-example-maven-java:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-java@v4
-
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -64,8 +60,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/setup-java@v4
-
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
