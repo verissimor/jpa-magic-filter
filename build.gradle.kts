@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "io.github.verissimor.lib"
-version = System.getenv("RELEASE_VERSION") ?: "3.2.1-SNAPSHOT"
+version = System.getenv("RELEASE_VERSION") ?: "3.2.1a-SNAPSHOT"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_17
