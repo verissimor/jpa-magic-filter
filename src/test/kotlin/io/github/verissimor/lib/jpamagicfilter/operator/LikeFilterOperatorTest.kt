@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 
 class LikeFilterOperatorTest : BaseTest() {
-
   @Test
   fun `should filter like`() {
     mockMvc.get("/api/users?name_like=C.")

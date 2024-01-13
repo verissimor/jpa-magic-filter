@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.get
 
 class IsNullFieldTypeTest : BaseTest() {
-
   @Test
   fun `should filter equals a Instant`() {
     mockMvc.get("/api/users?createdDate_is_null")

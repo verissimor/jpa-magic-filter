@@ -28,17 +28,16 @@ import io.github.verissimor.lib.jpamagicfilter.domain.DbFeatures
 import io.github.verissimor.lib.jpamagicfilter.domain.DbFeatures.NONE
 import io.github.verissimor.lib.jpamagicfilter.domain.DbFeatures.POSTGRES
 import io.github.verissimor.lib.jpamagicfilter.domain.ParsedField
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Root
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Root
 
 object PredicateParser {
-
   private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
   fun <T> parsePredicates(
@@ -47,59 +46,84 @@ object PredicateParser {
     root: Root<T>,
     cb: CriteriaBuilder,
     dbFeatures: DbFeatures,
-  ): List<Predicate> = params.mapNotNull { (field, value) ->
-    val parsedField = FieldParser.parseField(field, value, clazz, root)
+  ): List<Predicate> =
+    params.mapNotNull { (field, value) ->
+      val parsedField = FieldParser.parseField(field, value, clazz, root)
 
-    if (parsedField.fieldClass == null) {
-      log.info("Ignoring parameter $field")
-      return@mapNotNull null
+      if (parsedField.fieldClass == null) {
+        log.info("Ignoring parameter $field")
+        return@mapNotNull null
+      }
+
+      when (parsedField.filterOperator) {
+        EQUAL -> parseEqual(parsedField, value, cb)
+        NOT_EQUAL -> parseEqual(parsedField, value, cb).not()
+
+        GREATER_THAN -> parseGreaterThan(parsedField, value, cb)
+        GREATER_THAN_EQUAL -> parseGreaterThanEqual(parsedField, value, cb)
+        LESS_THAN -> parseLessThan(parsedField, value, cb)
+        LESS_THAN_EQUAL -> parseLessThanEqual(parsedField, value, cb)
+
+        LIKE -> parseLike(parsedField, value, cb, dbFeatures)
+        LIKE_EXP -> parseLikeExp(parsedField, value, cb, dbFeatures)
+        NOT_LIKE -> parseNotLike(parsedField, value, cb, dbFeatures)
+        NOT_LIKE_EXP -> parseNotLikeExp(parsedField, value, cb, dbFeatures)
+
+        IN -> parseIn(parsedField, value, params)
+        NOT_IN -> parseNotIn(parsedField, value, params)
+
+        IS_NULL -> cb.isNull(parsedField.getPath<Any>())
+        IS_NOT_NULL -> cb.isNotNull(parsedField.getPath<Any>())
+
+        BETWEEN -> parseBetween(parsedField, value, params, cb)
+      }
     }
 
-    when (parsedField.filterOperator) {
-      EQUAL -> parseEqual(parsedField, value, cb)
-      NOT_EQUAL -> parseEqual(parsedField, value, cb).not()
-
-      GREATER_THAN -> parseGreaterThan(parsedField, value, cb)
-      GREATER_THAN_EQUAL -> parseGreaterThanEqual(parsedField, value, cb)
-      LESS_THAN -> parseLessThan(parsedField, value, cb)
-      LESS_THAN_EQUAL -> parseLessThanEqual(parsedField, value, cb)
-
-      LIKE -> parseLike(parsedField, value, cb, dbFeatures)
-      LIKE_EXP -> parseLikeExp(parsedField, value, cb, dbFeatures)
-      NOT_LIKE -> parseNotLike(parsedField, value, cb, dbFeatures)
-      NOT_LIKE_EXP -> parseNotLikeExp(parsedField, value, cb, dbFeatures)
-
-      IN -> parseIn(parsedField, value, params)
-      NOT_IN -> parseNotIn(parsedField, value, params)
-
-      IS_NULL -> cb.isNull(parsedField.getPath<Any>())
-      IS_NOT_NULL -> cb.isNotNull(parsedField.getPath<Any>())
-
-      BETWEEN -> parseBetween(parsedField, value, params, cb)
-    }
-  }
-
-  private fun <T> parseLike(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder, dbFeatures: DbFeatures) = when (dbFeatures) {
+  private fun <T> parseLike(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    cb: CriteriaBuilder,
+    dbFeatures: DbFeatures,
+  ) = when (dbFeatures) {
     POSTGRES -> cb.like(cb.function("unaccent", String::class.java, cb.lower(parsedField.getPath())), "%${value.toSingleString()?.lowercase()?.unaccent()}%")
     NONE -> cb.like(cb.lower(parsedField.getPath()), "%${value.toSingleString()?.lowercase()}%")
   }
 
-  private fun <T> parseLikeExp(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder, dbFeatures: DbFeatures) = when (dbFeatures) {
+  private fun <T> parseLikeExp(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    cb: CriteriaBuilder,
+    dbFeatures: DbFeatures,
+  ) = when (dbFeatures) {
     POSTGRES -> cb.like(cb.function("unaccent", String::class.java, cb.lower(parsedField.getPath())), value.toSingleString()?.lowercase()?.unaccent())
     NONE -> cb.like(cb.lower(parsedField.getPath()), value.toSingleString()?.lowercase())
   }
 
-  private fun <T> parseNotLike(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder, dbFeatures: DbFeatures) = when (dbFeatures) {
+  private fun <T> parseNotLike(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    cb: CriteriaBuilder,
+    dbFeatures: DbFeatures,
+  ) = when (dbFeatures) {
     POSTGRES -> cb.notLike(cb.function("unaccent", String::class.java, cb.lower(parsedField.getPath())), "%${value.toSingleString()?.lowercase()?.unaccent()}%")
     NONE -> cb.notLike(cb.lower(parsedField.getPath()), "%${value.toSingleString()?.lowercase()}%")
   }
 
-  private fun <T> parseNotLikeExp(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder, dbFeatures: DbFeatures) = when (dbFeatures) {
+  private fun <T> parseNotLikeExp(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    cb: CriteriaBuilder,
+    dbFeatures: DbFeatures,
+  ) = when (dbFeatures) {
     POSTGRES -> cb.notLike(cb.function("unaccent", String::class.java, cb.lower(parsedField.getPath())), value.toSingleString()?.lowercase()?.unaccent())
     NONE -> cb.notLike(cb.lower(parsedField.getPath()), value.toSingleString()?.lowercase())
   }
 
-  private fun <T> parseEqual(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder) = when (parsedField.getFieldType()) {
+  private fun <T> parseEqual(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    cb: CriteriaBuilder,
+  ) = when (parsedField.getFieldType()) {
     ENUMERATED -> cb.equal(parsedField.getPath<String>().`as`(String::class.java), value.toSingleString())
     NUMBER -> cb.equal(parsedField.getPath<Number>(), value.toSingleBigDecimal())
     LOCAL_DATE -> cb.equal(parsedField.getPath<LocalDate>(), value.toSingleDate())
@@ -109,35 +133,55 @@ object PredicateParser {
     null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseEqual")
   }
 
-  private fun <T> parseGreaterThan(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder) = when (parsedField.getFieldType()) {
+  private fun <T> parseGreaterThan(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    cb: CriteriaBuilder,
+  ) = when (parsedField.getFieldType()) {
     NUMBER -> cb.gt(parsedField.getPath<Number>(), value.toSingleBigDecimal())
     LOCAL_DATE -> cb.greaterThan(parsedField.getPath<LocalDate>(), value.toSingleDate())
     INSTANT -> cb.greaterThan(parsedField.getPath<Instant>(), value.toSingleInstant())
     ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThan")
   }
 
-  private fun <T> parseGreaterThanEqual(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder) = when (parsedField.getFieldType()) {
+  private fun <T> parseGreaterThanEqual(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    cb: CriteriaBuilder,
+  ) = when (parsedField.getFieldType()) {
     NUMBER -> cb.ge(parsedField.getPath<Number>(), value.toSingleBigDecimal())
     LOCAL_DATE -> cb.greaterThanOrEqualTo(parsedField.getPath<LocalDate>(), value.toSingleDate())
     INSTANT -> cb.greaterThanOrEqualTo(parsedField.getPath<Instant>(), value.toSingleInstant())
     ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseGreaterThanEqual")
   }
 
-  private fun <T> parseLessThan(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder) = when (parsedField.getFieldType()) {
+  private fun <T> parseLessThan(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    cb: CriteriaBuilder,
+  ) = when (parsedField.getFieldType()) {
     NUMBER -> cb.lt(parsedField.getPath<Number>(), value.toSingleBigDecimal())
     LOCAL_DATE -> cb.lessThan(parsedField.getPath<LocalDate>(), value.toSingleDate())
     INSTANT -> cb.lessThan(parsedField.getPath<Instant>(), value.toSingleInstant())
     ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThan")
   }
 
-  private fun <T> parseLessThanEqual(parsedField: ParsedField<T>, value: Array<String>?, cb: CriteriaBuilder) = when (parsedField.getFieldType()) {
+  private fun <T> parseLessThanEqual(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    cb: CriteriaBuilder,
+  ) = when (parsedField.getFieldType()) {
     NUMBER -> cb.le(parsedField.getPath<Number>(), value.toSingleBigDecimal())
     LOCAL_DATE -> cb.lessThanOrEqualTo(parsedField.getPath<LocalDate>(), value.toSingleDate())
     INSTANT -> cb.lessThanOrEqualTo(parsedField.getPath<Instant>(), value.toSingleInstant())
     ENUMERATED, GENERIC, BOOLEAN, UUID, null -> error("field `${parsedField.resolvedFieldName}` is `${parsedField.fieldClass}` and doesn't support parseLessThanEqual")
   }
 
-  private fun <T> parseInValues(parsedField: ParsedField<T>, value: Array<String>?, params: Map<String, Array<String>?>): List<String> {
+  private fun <T> parseInValues(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    params: Map<String, Array<String>?>,
+  ): List<String> {
     val separator: String = params.toSingleParameter(SEARCH_IN_SEPARATOR_PRM)?.toString() ?: SEARCH_IN_SEPARATOR_DEF
 
     return when {
@@ -148,7 +192,11 @@ object PredicateParser {
     }
   }
 
-  private fun <T> parseIn(parsedField: ParsedField<T>, value: Array<String>?, params: Map<String, Array<String>?>): Predicate? {
+  private fun <T> parseIn(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    params: Map<String, Array<String>?>,
+  ): Predicate? {
     val values = parseInValues(parsedField, value, params)
 
     return when (parsedField.getFieldType()) {
@@ -161,7 +209,11 @@ object PredicateParser {
     }
   }
 
-  private fun <T> parseNotIn(parsedField: ParsedField<T>, value: Array<String>?, params: Map<String, Array<String>?>): Predicate? {
+  private fun <T> parseNotIn(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    params: Map<String, Array<String>?>,
+  ): Predicate? {
     val values = parseInValues(parsedField, value, params)
 
     return when (parsedField.getFieldType()) {
@@ -174,7 +226,12 @@ object PredicateParser {
     }
   }
 
-  private fun <T> parseBetween(parsedField: ParsedField<T>, value: Array<String>?, params: Map<String, Array<String>?>, cb: CriteriaBuilder): Predicate? {
+  private fun <T> parseBetween(
+    parsedField: ParsedField<T>,
+    value: Array<String>?,
+    params: Map<String, Array<String>?>,
+    cb: CriteriaBuilder,
+  ): Predicate? {
     val values = parseInValues(parsedField, value, params)
 
     return when (parsedField.getFieldType()) {

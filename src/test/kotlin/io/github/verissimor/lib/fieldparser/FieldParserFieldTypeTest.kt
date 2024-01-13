@@ -16,7 +16,6 @@ import java.time.Instant
 import java.time.LocalDate
 
 class FieldParserFieldTypeTest {
-
   @Test
   fun `should parse field type Generic String`() {
     val params = listOf("name" to "Joe").toMultiMap()

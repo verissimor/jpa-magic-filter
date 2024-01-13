@@ -6,7 +6,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class FieldParserGroupTest {
-
   @Test
   fun `should default group to zero`() {
     val params = listOf("name" to "Joe").toMultiMap()

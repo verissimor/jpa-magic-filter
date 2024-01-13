@@ -9,7 +9,6 @@ import java.time.Instant
 import java.time.LocalDate
 
 class R2dbcMagicFilterSqlWriterTest {
-
   @Test
   fun `test sql writer equals string`() {
     val params = listOf("name" to "Joe").toMultiMap()

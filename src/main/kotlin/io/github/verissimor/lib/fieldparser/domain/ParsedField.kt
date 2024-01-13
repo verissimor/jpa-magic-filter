@@ -14,7 +14,6 @@ data class ParsedField(
   val group: Int,
   val combineOperator: CombineOperator,
 ) : ValueParser(resolvedFieldName, sourceValue) {
-
   fun getFieldType(): FieldType? = fieldClass.toFieldType()
 
   fun validate() {

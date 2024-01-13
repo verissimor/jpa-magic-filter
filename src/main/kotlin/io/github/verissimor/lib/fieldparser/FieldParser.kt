@@ -18,10 +18,12 @@ import org.slf4j.LoggerFactory
 import java.lang.reflect.Field
 
 object FieldParser {
-
   private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-  fun parseFields(params: Map<String, List<String>?>, clazz: Class<*>): List<ParsedField> {
+  fun parseFields(
+    params: Map<String, List<String>?>,
+    clazz: Class<*>,
+  ): List<ParsedField> {
     return params.mapNotNull { (field, value) ->
 
       val parsedField = parseField(field, value, clazz)
@@ -41,7 +43,11 @@ object FieldParser {
     }
   }
 
-  private fun parseField(field: String, value: List<String>?, clazz: Class<*>): ParsedField {
+  private fun parseField(
+    field: String,
+    value: List<String>?,
+    clazz: Class<*>,
+  ): ParsedField {
     val group: Int = parseGroup(field)
     val combineOperator: CombineOperator = if (field.startsWith("or__")) OR else AND
     val normalized = normalize(field, group)
@@ -55,15 +61,19 @@ object FieldParser {
     return ParsedField(resolvedOperator, resolvedFieldName, fieldClass, value, group, combineOperator)
   }
 
-  private fun normalize(field: String, group: Int) = field.trim()
+  private fun normalize(
+    field: String,
+    group: Int,
+  ) = field.trim()
     .replace("[]", "") // remove array format of a few js libraries
     .replace("__$group", "") // remove the group
     .let { if (it.startsWith("or__")) it.replace("or__", "") else it } // remove the or
 
   private fun fieldToFilterOperator(field: String): FilterOperator {
-    val type = FilterOperator.values()
-      .sortedByDescending { it.suffix.length }
-      .firstOrNull { field.lowercase().endsWith(it.suffix) } ?: FilterOperator.EQUAL
+    val type =
+      FilterOperator.values()
+        .sortedByDescending { it.suffix.length }
+        .firstOrNull { field.lowercase().endsWith(it.suffix) } ?: FilterOperator.EQUAL
 
     return type
   }
@@ -71,7 +81,7 @@ object FieldParser {
   private fun overloadFilterOperator(
     filterOperator: FilterOperator,
     value: List<String>?,
-    fieldClass: Field?
+    fieldClass: Field?,
   ): FilterOperator {
     val shouldTryOverload = value != null && filterOperator == FilterOperator.EQUAL
     val fieldType: FieldType? = fieldClass.toFieldType()
@@ -87,25 +97,32 @@ object FieldParser {
     val shouldTrySplitComma = value!!.size == 1 && listOf(ENUMERATED, NUMBER, LOCAL_DATE, UUID).contains(fieldType)
     if (shouldTryOverload && shouldTrySplitComma && value.firstOrNull()!!.contains(",")) {
       val list = parseStringIntoList(value.firstOrNull()!!)
-      if (list?.isNotEmpty() == true)
+      if (list?.isNotEmpty() == true) {
         return FilterOperator.IN
+      }
     }
 
     return filterOperator
   }
 
-  private fun resolveFieldName(field: String, type: FilterOperator?) =
-    type?.let { field.replace(it.suffix, "") } ?: field
+  private fun resolveFieldName(
+    field: String,
+    type: FilterOperator?,
+  ) = type?.let { field.replace(it.suffix, "") } ?: field
 
-  private fun fieldToClass(field: String, root: Class<*>): Field? {
+  private fun fieldToClass(
+    field: String,
+    root: Class<*>,
+  ): Field? {
     var resultField: Field? = null
     field.split(".")
       .forEach { fieldP ->
-        resultField = if (resultField == null) {
-          root.declaredFields.firstOrNull { it.name == fieldP }
-        } else {
-          resultField?.type?.declaredFields?.firstOrNull { it.name == fieldP }
-        }
+        resultField =
+          if (resultField == null) {
+            root.declaredFields.firstOrNull { it.name == fieldP }
+          } else {
+            resultField?.type?.declaredFields?.firstOrNull { it.name == fieldP }
+          }
       }
 
     return resultField
