@@ -1,15 +1,16 @@
 package io.github.verissimor.examples.javamavenh2.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 
 @Entity
 @Data
@@ -18,7 +19,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class City {
   @Id
   @GeneratedValue(strategy = IDENTITY)
-      @Nullable
+  @Nullable
   Long id;
   String name;
 }
