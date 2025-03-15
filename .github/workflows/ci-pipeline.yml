@@ -39,10 +39,10 @@ jobs:
           add: '*.svg'
 
       - name: Upload JaCoCo coverage report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: jacoco-report
-          path: target/site/jacoco/
+          path: build/reports/jacoco/test/html/
 
 #  build-example-maven-java:
 #    runs-on: ubuntu-latest
