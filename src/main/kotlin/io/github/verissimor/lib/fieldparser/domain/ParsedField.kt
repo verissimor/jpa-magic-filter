@@ -4,6 +4,7 @@ import io.github.verissimor.lib.fieldparser.domain.FieldType.Companion.compariso
 import io.github.verissimor.lib.fieldparser.domain.FieldType.Companion.comparisonTypes
 import io.github.verissimor.lib.fieldparser.domain.FieldType.Companion.toFieldType
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.BETWEEN
+import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_BETWEEN
 import java.lang.reflect.Field
 
 data class ParsedField(
@@ -21,7 +22,8 @@ data class ParsedField(
       error("The field $resolvedFieldName is not compatible with operator $filterOperator")
     }
 
-    if (filterOperator == BETWEEN && getListStringOrNull()?.size != 2) {
+    val requiresTwoParams = filterOperator == BETWEEN || filterOperator == NOT_BETWEEN
+    if (requiresTwoParams && getListStringOrNull()?.size != 2) {
       error("The field $resolvedFieldName uses the $filterOperator which requires 2 parameters $sourceValue")
     }
   }

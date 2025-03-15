@@ -40,6 +40,16 @@ fun <T, V> KProperty1<T, V?>.isNull(): Pair<String, Any> = name + "_is_null" to 
 
 fun <T, V> KProperty1<T, V?>.isNotNull(): Pair<String, Any> = name + "_is_not_null" to ""
 
+fun <T, V> KProperty1<T, V?>.between(
+  value1: Any,
+  value2: Any,
+): Pair<String, Any> = name + "_is_between" to "$value1,$value2"
+
+fun <T, V> KProperty1<T, V?>.notBetween(
+  value1: Any,
+  value2: Any,
+): Pair<String, Any> = name + "_is_not_between" to "$value1,$value2"
+
 fun DatabaseClient.sql(
   sql: String,
   binder: SqlBinder?,

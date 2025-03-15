@@ -18,6 +18,7 @@ import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LESS_THAN
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LESS_THAN_EQUAL
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LIKE
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LIKE_EXP
+import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_BETWEEN
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_EQUAL
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_IN
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_LIKE
@@ -108,6 +109,11 @@ object R2dbcSqlWriter {
             params["${fieldParam}a"] = resolveListFieldValue(field)[0]
             params["${fieldParam}b"] = resolveListFieldValue(field)[1]
             "$andOr $fieldName BETWEEN :${fieldParam}a AND :${fieldParam}b"
+          }
+          NOT_BETWEEN -> {
+            params["${fieldParam}a"] = resolveListFieldValue(field)[0]
+            params["${fieldParam}b"] = resolveListFieldValue(field)[1]
+            "$andOr $fieldName NOT BETWEEN :${fieldParam}a AND :${fieldParam}b"
           }
           NOT_EQUAL -> {
             // AND b.name <> :name1

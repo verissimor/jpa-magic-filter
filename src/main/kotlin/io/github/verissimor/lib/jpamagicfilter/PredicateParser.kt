@@ -18,6 +18,7 @@ import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LESS_THAN
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LESS_THAN_EQUAL
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LIKE
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LIKE_EXP
+import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_BETWEEN
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_EQUAL
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_IN
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_LIKE
@@ -76,6 +77,7 @@ object PredicateParser {
         IS_NOT_NULL -> cb.isNotNull(parsedField.getPath<Any>())
 
         BETWEEN -> parseBetween(parsedField, value, params, cb)
+        NOT_BETWEEN -> parseBetween(parsedField, value, params, cb)
       }
     }
 

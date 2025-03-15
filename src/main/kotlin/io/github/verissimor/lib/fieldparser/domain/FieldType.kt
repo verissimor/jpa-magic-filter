@@ -5,6 +5,7 @@ import io.github.verissimor.lib.fieldparser.domain.FilterOperator.GREATER_THAN
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.GREATER_THAN_EQUAL
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LESS_THAN
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.LESS_THAN_EQUAL
+import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_BETWEEN
 import java.lang.reflect.Field
 import java.math.BigDecimal
 import java.time.Instant
@@ -21,7 +22,7 @@ enum class FieldType {
   ;
 
   companion object {
-    val comparisonOperators = listOf(GREATER_THAN, GREATER_THAN_EQUAL, LESS_THAN, LESS_THAN_EQUAL, BETWEEN)
+    val comparisonOperators = listOf(GREATER_THAN, GREATER_THAN_EQUAL, LESS_THAN, LESS_THAN_EQUAL, BETWEEN, NOT_BETWEEN)
     val comparisonTypes = listOf(NUMBER, LOCAL_DATE, INSTANT)
 
     fun Field?.toFieldType(): FieldType? =

@@ -149,23 +149,24 @@ where u.name like '%Matthew%' and u.age > 23 and c.name = 'London'
 
 ## Supported Operators
 
-| Operator           | Suffix        | Example                     |
-|--------------------|---------------|-----------------------------|
-| EQUAL              |               | `?name=Matthew`             |
-| NOT_EQUAL          | _ne           | `?age_ne=32`                |
-| GREATER_THAN       | _gt           | `?age_gt=32`                |
-| GREATER_THAN_EQUAL | _ge           | `?age_ge=32`                |
-| LESS_THAN          | _lt           | `?age_lt=32`                |
-| LESS_THAN_EQUAL    | _le           | `?age_le=32`                |
-| LIKE               | _like         | `?name_like=Matthew`        |
-| LIKE_EXP           | _like_exp     | `?name_like_exp=M%th%w`     |
-| NOT_LIKE           | _not_like     | `?name_not_like=Matthew`    |
-| NOT_LIKE_EXP       | _not_like_exp | `?name_not_like_exp=M%th%w` |
-| IN                 | _in           | `?age_in=23,24,25,26`       |
-| NOT_IN             | _not_in       | `?age_not_in=23,24,25,26`   |
-| IS_NULL            | _is_null      | `?age_is_null`              |
-| IS_NOT_NULL        | _is_not_null  | `?age_is_not_null`          |
-| BETWEEN            | _is_between   | `?age_is_between=22,30`     |
+| Operator           | Suffix           | Example                     |
+| ------------------ | ---------------- | --------------------------- |
+| EQUAL              |                  | `?name=Matthew`             |
+| NOT_EQUAL          | _ne              | `?age_ne=32`                |
+| GREATER_THAN       | _gt              | `?age_gt=32`                |
+| GREATER_THAN_EQUAL | _ge              | `?age_ge=32`                |
+| LESS_THAN          | _lt              | `?age_lt=32`                |
+| LESS_THAN_EQUAL    | _le              | `?age_le=32`                |
+| LIKE               | _like            | `?name_like=Matthew`        |
+| LIKE_EXP           | _like_exp        | `?name_like_exp=M%th%w`     |
+| NOT_LIKE           | _not_like        | `?name_not_like=Matthew`    |
+| NOT_LIKE_EXP       | _not_like_exp    | `?name_not_like_exp=M%th%w` |
+| IN                 | _in              | `?age_in=23,24,25,26`       |
+| NOT_IN             | _not_in          | `?age_not_in=23,24,25,26`   |
+| IS_NULL            | _is_null         | `?age_is_null`              |
+| IS_NOT_NULL        | _is_not_null     | `?age_is_not_null`          |
+| BETWEEN            | _is_between      | `?age_is_between=22,30`     |
+| NOT_BETWEEN        | _is_not_between  | `?age_is_not_between=22,30` |
 
 ### LIKE vs LIKE_EXP
 
