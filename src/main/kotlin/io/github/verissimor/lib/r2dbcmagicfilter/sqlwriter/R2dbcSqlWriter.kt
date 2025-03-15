@@ -24,6 +24,7 @@ import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_IN
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_LIKE
 import io.github.verissimor.lib.fieldparser.domain.FilterOperator.NOT_LIKE_EXP
 import io.github.verissimor.lib.fieldparser.domain.ParsedField
+import io.github.verissimor.lib.jpamagicfilter.unaccent
 
 object R2dbcSqlWriter {
   fun writeSql(
@@ -70,22 +71,22 @@ object R2dbcSqlWriter {
           LIKE_EXP -> {
             // AND b.name LIKE :name1
             params[fieldParam] = resolveFieldValue(field)
-            "$andOr $fieldName LIKE :$fieldParam"
+            "$andOr public.unaccent(lower($fieldName)) LIKE :$fieldParam"
           }
           LIKE -> {
             // AND b.name LIKE :name1
-            params[fieldParam] = resolveFieldValue(field)
-            "$andOr $fieldName LIKE :$fieldParam"
+            params[fieldParam] = "%" + resolveFieldValue(field).toString().lowercase().unaccent() + "%"
+            "$andOr public.unaccent(lower($fieldName)) LIKE :$fieldParam"
           }
           NOT_LIKE_EXP -> {
             // AND b.name NOT LIKE :name1
             params[fieldParam] = resolveFieldValue(field)
-            "$andOr $fieldName NOT LIKE :$fieldParam"
+            "$andOr public.unaccent(lower($fieldName)) NOT LIKE :$fieldParam"
           }
           NOT_LIKE -> {
             // AND b.name NOT LIKE :name1
-            params[fieldParam] = resolveFieldValue(field)
-            "$andOr $fieldName NOT LIKE :$fieldParam"
+            params[fieldParam] = "%" + resolveFieldValue(field).toString().lowercase().unaccent() + "%"
+            "$andOr public.unaccent(lower($fieldName)) NOT LIKE :$fieldParam"
           }
           IN -> {
             // AND b.name NOT IN (:name1)

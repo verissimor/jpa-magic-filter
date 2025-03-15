@@ -316,7 +316,7 @@ val rows = template.databaseClient.sql(sql, sqlBinder)
 Execute the following piece of code on your db, [more info](https://stackoverflow.com/a/11007216/5795553): 
 
 ```sql
-CREATE EXTENSION unaccent;
+CREATE EXTENSION public.unaccent;
 ```
 
 Then enable postgres extensions through:

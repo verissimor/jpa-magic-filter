@@ -71,7 +71,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name LIKE :name0)")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (public.unaccent(lower(b.name)) LIKE :name0)")
     assertThat(sqlBinder?.params?.get("name0")).isEqualTo("John")
   }
 
@@ -82,8 +82,8 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name LIKE :name0)")
-    assertThat(sqlBinder?.params?.get("name0")).isEqualTo("Doe")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (public.unaccent(lower(b.name)) LIKE :name0)")
+    assertThat(sqlBinder?.params?.get("name0")).isEqualTo("%doe%")
   }
 
   @Test
@@ -93,7 +93,7 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name NOT LIKE :name0)")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (public.unaccent(lower(b.name)) NOT LIKE :name0)")
     assertThat(sqlBinder?.params?.get("name0")).isEqualTo("Smith")
   }
 
@@ -104,8 +104,8 @@ class R2dbcMagicFilterSqlWriterTest {
 
     val sqlBinder = filter.toSqlBinder(ReactiveUser::class.java, "b")
 
-    assertThat(sqlBinder?.sql).isEqualTo(" AND (b.name NOT LIKE :name0)")
-    assertThat(sqlBinder?.params?.get("name0")).isEqualTo("Johnson")
+    assertThat(sqlBinder?.sql).isEqualTo(" AND (public.unaccent(lower(b.name)) NOT LIKE :name0)")
+    assertThat(sqlBinder?.params?.get("name0")).isEqualTo("%johnson%")
   }
 
   @Test
